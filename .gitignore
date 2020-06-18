@@ -2,3 +2,7 @@
 *.iml
 /.idea
 
+
+/*/conf
+/log
+/*/log

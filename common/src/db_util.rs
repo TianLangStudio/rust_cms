@@ -14,5 +14,4 @@ lazy_static!  {
                     .build(manager)
                     .expect("Failed to create pool.")
     };
-
 }
