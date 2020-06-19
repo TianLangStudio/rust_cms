@@ -5,13 +5,19 @@ use log::info;
 
 use super::config_util;
 
+pub type DbConnection = MysqlConnection;
+
 lazy_static!  {
-    pub static ref POOL:  r2d2::Pool<ConnectionManager<MysqlConnection>> = {
+    pub static ref POOL:  r2d2::Pool<ConnectionManager<DbConnection>> = {
                 info!("db pool init");
                 let connspec = config_util::APP_CONFIG.get_str("tl.app.db.url") .expect("db url is required");
-                let manager = ConnectionManager::<MysqlConnection>::new(connspec);
+                let manager = ConnectionManager::<DbConnection>::new(connspec);
                  r2d2::Pool::builder()
                     .build(manager)
                     .expect("Failed to create pool.")
     };
+}
+
+pub fn uuid() -> String {
+    uuid::Uuid::new_v4().to_string()
 }

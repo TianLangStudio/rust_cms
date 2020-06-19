@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use super::schema::tb_login_info;
+use crate::schema::tb_login_info;
 
 #[derive(Queryable)]
 pub struct LoginInfoModel {

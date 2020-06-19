@@ -20,5 +20,5 @@ rustls = "0.16"
 serde="1"
 diesel = {version ="1", features=["mysql","r2d2"]}
 common = {path="../common"}
-user = {path="../user"}
+dao = {path="../dao"}
 

@@ -1,21 +1,20 @@
 use std::fs::File;
 use std::io::BufReader;
-use actix_web::{ App, HttpServer, HttpResponse, dev::ServiceResponse};
-use actix_session::{CookieSession , UserSession};
+use actix_web::{ App, HttpServer};
+use actix_session::{CookieSession};
 use rustls::{NoClientAuth, ServerConfig};
 use rustls::internal::pemfile::{certs, rsa_private_keys};
-use futures::future::{FutureExt}; 
-use actix_service::Service;
-
 use log::*;
 
 use common::{log_util, config_util, db_util};
 mod userctrl;
+mod articlectrl;
 mod middleware;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     log_util::init();
+    info!("app starting");
 
     //let app_config = config_util::APP_CONFIG;
     let is_prod = config_util::is_prod();
@@ -29,6 +28,8 @@ async fn main() -> std::io::Result<()> {
             .service(userctrl::login)
             .service(userctrl::register)
             .service(userctrl::admin_test)
+            .service(articlectrl::admin_add_article)
+            .service(articlectrl::admin_edit_article)
     );
 
     if is_prod  {

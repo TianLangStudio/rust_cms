@@ -1,5 +1,5 @@
 [package]
-name = "user"
+name = "dao"
 version = "0.1.0"
 authors = ["Tianlang <tianlangstuido@aliyun.com>"]
 edition = "2018"

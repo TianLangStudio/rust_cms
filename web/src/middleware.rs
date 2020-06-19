@@ -1,16 +1,14 @@
 #![allow(clippy::type_complexity)]
 use std::cell::RefCell;
-use std::ops::{Deref, DerefMut};
 use std::pin::Pin;
 use std::rc::Rc;
-use std::sync::Arc;
 use std::task::{Context, Poll};
 
 use futures::future::{ok, Ready};
 use futures::Future;
 
 use actix_service::{Service, Transform};
-use actix_web::{dev::ServiceRequest, dev::ServiceResponse, Error, HttpMessage, HttpResponse};
+use actix_web::{dev::ServiceRequest, dev::ServiceResponse, Error,  HttpResponse};
 use actix_session::{UserSession};
 
 use log::{info};

@@ -1,5 +1,6 @@
 #![allow(unused)]
 use serde::Serialize;
+use actix_web::{ Responder, HttpResponse};
 
 #[derive(Serialize)]
 pub struct AjaxResult<T> {
@@ -40,4 +41,14 @@ impl<T> AjaxResult<T> {
      pub fn get_data(&self) -> &Option<Vec<T>> {
               &self.data
      }
+}
+
+pub fn ok_without_data() -> impl Responder {
+    HttpResponse::Ok().json(AjaxResult::<bool>::success_without_data())
+}
+
+pub fn forbidden_with_errmsg(msg: String)  -> impl Responder { 
+
+    HttpResponse::Forbidden().json(AjaxResult::<bool>::fail(msg))
+    
 }

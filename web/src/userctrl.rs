@@ -1,5 +1,4 @@
 use actix_web::{post, get, web, Responder, HttpResponse};
-use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use actix_session::Session;
 
@@ -9,9 +8,10 @@ use log::{info, warn};
 use common::result::AjaxResult;
 use common::sign_util::blake2_sign;
 
-use user::{models::*, repos::*};
+use dao::{models::usermod::*, repos::userrepo};
 
-type Pool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
+pub type DbConnection = userrepo::DbConnection;
+pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 
 #[get("/admin/test")]
 async fn admin_test (session: Session) -> impl Responder {
@@ -23,12 +23,11 @@ async fn register(
     pool: web::Data<Pool>,
     login_info: web::Json<LoginInfo>
 ) -> impl Responder {
-        let conn:&MysqlConnection = &pool.get().unwrap();
         let new_login_info = NewLoginInfo {
                 username: &login_info.username,
                 password:  &login_info.password,
         };
-        match add_login_info(conn, &new_login_info) {
+        match userrepo::add_login_info(&pool.get().unwrap(), &new_login_info) {
                             Ok(info) => HttpResponse::Ok().json(AjaxResult::success_with_single(info)),
                             Err(err) =>  HttpResponse::Forbidden().json(AjaxResult::<String>::fail(err.to_string()))
                      }
@@ -78,8 +77,12 @@ async fn login(
         }
         _ => {
             info!("{} login now", login_info.username);
-            let conn:&MysqlConnection = &pool.get().unwrap();
-            match valid_login_info (conn, &login_info.username,  &login_info.password)  {
+            
+            match userrepo::valid_login_info (
+                &pool.get().unwrap(),
+                &login_info.username, 
+                 &login_info.password
+                )  {
                         true =>  {
                             let user_key_sign =  blake2_sign(&login_info.username);
                             session.set::<String>(SESSION_USER_KEY_SIGN, user_key_sign).unwrap();
