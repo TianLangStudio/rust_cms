@@ -11,11 +11,14 @@ log = "0.4"
 actix-web={version = "2", features=["rustls"]}
 actix-rt="1"
 actix-session="0.3"
+actix-files = "0.2.2"
+actix-service = "1"
+actix-utils = "1"
+
+futures = "0.3"
 rustls = "0.16"
 serde="1"
-actix-files = "0.2.2"
 diesel = {version ="1", features=["mysql","r2d2"]}
-
 common = {path="../common"}
 user = {path="../user"}
 

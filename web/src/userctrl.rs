@@ -1,7 +1,9 @@
-use actix_web::{post, web, Responder, HttpResponse};
+use actix_web::{post, get, web, Responder, HttpResponse};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use actix_session::Session;
+
+
 use log::{info, warn};
 
 use common::result::AjaxResult;
@@ -11,7 +13,12 @@ use user::{models::*, repos::*};
 
 type Pool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
-#[post("/register")]
+#[get("/admin/test")]
+async fn admin_test (session: Session) -> impl Responder {
+    let username = get_username_from_session(session).unwrap();
+   format! ("Hello, {}", username )
+}
+#[post("/api/register")]
 async fn register(
     pool: web::Data<Pool>,
     login_info: web::Json<LoginInfo>
@@ -30,7 +37,23 @@ async fn register(
 const SESSION_USER_KEY: &str = "user_info";
 const SESSION_USER_KEY_SIGN: &str = "user_info_sign";
 
-#[post("/login")]
+
+pub fn get_username_from_session(session: Session) -> Option<String>{
+            let username =  match session.get::<String>(SESSION_USER_KEY) {
+                Ok(uname) => uname?,
+                _ =>  return None
+            };
+            let user_key_sign = blake2_sign(&username);
+            match session.get::<String>(SESSION_USER_KEY_SIGN) {
+                Ok(Some(user_key_sign_session))  if user_key_sign == user_key_sign_session => {
+                        Some(username)
+                }
+                _ => {
+                    None
+                }
+            }
+}
+#[post("/api/login")]
 async fn login(
     session: Session, 
     pool: web::Data<Pool>,

@@ -1,13 +1,17 @@
 use std::fs::File;
 use std::io::BufReader;
-use actix_web::{ App, HttpServer};
-use actix_session::{CookieSession};
+use actix_web::{ App, HttpServer, HttpResponse, dev::ServiceResponse};
+use actix_session::{CookieSession , UserSession};
 use rustls::{NoClientAuth, ServerConfig};
 use rustls::internal::pemfile::{certs, rsa_private_keys};
+use futures::future::{FutureExt}; 
+use actix_service::Service;
+
+use log::*;
 
 use common::{log_util, config_util, db_util};
 mod userctrl;
-
+mod middleware;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -17,11 +21,14 @@ async fn main() -> std::io::Result<()> {
     let is_prod = config_util::is_prod();
     let server = HttpServer::new(move || App::new()
             .data(db_util::POOL.clone())
-                .wrap(
+            .wrap(middleware::AuthService{})
+            .wrap(
                     CookieSession::signed(&[0; 32]) // <- create cookie based session middleware
                         .secure(is_prod),
-                ).service(userctrl::login)
-                 .service(userctrl::register)
+            )
+            .service(userctrl::login)
+            .service(userctrl::register)
+            .service(userctrl::admin_test)
     );
 
     if is_prod  {

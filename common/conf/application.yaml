@@ -1,5 +1,0 @@
-tl:
-     app:
-           mode : dev
-           sign: 
-               salt:  This2020YearRustCms
