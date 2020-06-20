@@ -2,7 +2,6 @@
 
 members = [
     "common",
-    "template",
     "dao",
     "web"
 ]

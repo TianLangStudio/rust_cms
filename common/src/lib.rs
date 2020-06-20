@@ -6,6 +6,7 @@ pub mod log_util;
 pub mod db_util;
 pub mod result;
 
+
 #[cfg(test)]
 mod tests {
     #[test]

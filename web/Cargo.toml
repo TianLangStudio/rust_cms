@@ -14,7 +14,7 @@ actix-session="0.3"
 actix-files = "0.2.2"
 actix-service = "1"
 actix-utils = "1"
-
+tera = "1"
 futures = "0.3"
 rustls = "0.16"
 serde="1"

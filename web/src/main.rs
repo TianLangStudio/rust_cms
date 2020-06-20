@@ -1,36 +1,48 @@
 use std::fs::File;
 use std::io::BufReader;
 use actix_web::{ App, HttpServer};
+use actix_files as fs;
 use actix_session::{CookieSession};
 use rustls::{NoClientAuth, ServerConfig};
 use rustls::internal::pemfile::{certs, rsa_private_keys};
+use tera::Tera;
 use log::*;
 
 use common::{log_util, config_util, db_util};
+mod web_util;
 mod userctrl;
 mod articlectrl;
+mod indexctrl;
 mod middleware;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     log_util::init();
     info!("app starting");
-
+  
     //let app_config = config_util::APP_CONFIG;
     let is_prod = config_util::is_prod();
-    let server = HttpServer::new(move || App::new()
-            .data(db_util::POOL.clone())
-            .wrap(middleware::AuthService{})
+    let server = HttpServer::new(move || {
+        let tera =
+        Tera::new("template/**/*.html").unwrap();
+        App::new()
+            .data(tera)
+            .data(db_util::POOL.clone()) //绑定数据库链接池
+            .wrap(middleware::AuthService{}) //添加根据Session验证登录状态的中间件
             .wrap(
-                    CookieSession::signed(&[0; 32]) // <- create cookie based session middleware
+                    CookieSession::signed(&[0; 32]) // <- 添加使用cookie实现的session中间件
                         .secure(is_prod),
             )
-            .service(userctrl::login)
-            .service(userctrl::register)
-            .service(userctrl::admin_test)
-            .service(articlectrl::admin_add_article)
-            .service(articlectrl::admin_edit_article)
-    );
+            .service(userctrl::login) //用户登录接口
+            .service(userctrl::logout)//退出登录
+            .service(userctrl::register)//用户注册接口
+            .service(userctrl::admin_test)//用于测试AuthService中间件是否有效的接口
+            .service(articlectrl::admin_add_article)//新增文章接口
+            .service(articlectrl::admin_edit_article)//编辑文章接口
+            .service(fs::Files::new("/static", "static").show_files_listing())//静态文件
+            .service(indexctrl::favicon)//favicon
+            .service(indexctrl::index)//首页
+    });
 
     if is_prod  {
 
@@ -44,7 +56,10 @@ async fn main() -> std::io::Result<()> {
             .run()
             .await
     }else {
-        server.bind("127.0.0.1:8088")?
+        let port = config_util::APP_CONFIG.get_str("tl.app.http.port").expect("port is required");
+        let host = config_util::APP_CONFIG.get_str("tl.app.http.host").expect("host is required");
+        let host_port = host + ":" + &port;
+        server.bind(&host_port)?
             .run()
             .await
     }

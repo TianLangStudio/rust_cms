@@ -13,7 +13,7 @@ use actix_session::{UserSession};
 
 use log::{info};
 
-use super::userctrl;
+use super::web_util;
 
 #[derive(Clone)]
 pub struct AuthService {
@@ -65,7 +65,7 @@ where
         Box::pin(async move {
             let path = req.path().to_string();
             info!("path:{}", path);
-            if path.find("/admin") .is_some() &&  userctrl::get_username_from_session(req.get_session()).is_none() {
+            if path.find("/admin") .is_some() &&  web_util::get_username_from_session(&req.get_session()).is_none() {
                 Ok(req.into_response(HttpResponse::Unauthorized().finish().into_body()))
             } else {
                  let res_fut = srv.call(req);

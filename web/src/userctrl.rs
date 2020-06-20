@@ -7,6 +7,7 @@ use log::{info, warn};
 
 use common::result::AjaxResult;
 use common::sign_util::blake2_sign;
+use super::web_util;
 
 use dao::{models::usermod::*, repos::userrepo};
 
@@ -15,7 +16,7 @@ pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 
 #[get("/admin/test")]
 async fn admin_test (session: Session) -> impl Responder {
-    let username = get_username_from_session(session).unwrap();
+    let username = web_util::get_username_from_session(&session).unwrap();
    format! ("Hello, {}", username )
 }
 #[post("/api/register")]
@@ -33,25 +34,10 @@ async fn register(
                      }
 }
 
-const SESSION_USER_KEY: &str = "user_info";
-const SESSION_USER_KEY_SIGN: &str = "user_info_sign";
+const SESSION_USER_KEY: &str = web_util::SESSION_USER_KEY;
+const SESSION_USER_KEY_SIGN: &str = web_util::SESSION_USER_KEY_SIGN;
 
 
-pub fn get_username_from_session(session: Session) -> Option<String>{
-            let username =  match session.get::<String>(SESSION_USER_KEY) {
-                Ok(uname) => uname?,
-                _ =>  return None
-            };
-            let user_key_sign = blake2_sign(&username);
-            match session.get::<String>(SESSION_USER_KEY_SIGN) {
-                Ok(Some(user_key_sign_session))  if user_key_sign == user_key_sign_session => {
-                        Some(username)
-                }
-                _ => {
-                    None
-                }
-            }
-}
 #[post("/api/login")]
 async fn login(
     session: Session, 
@@ -96,3 +82,11 @@ async fn login(
     }
 }
 
+#[get("/api/logout")]
+async fn logout(
+    session: Session
+) -> impl Responder {
+    session.remove(SESSION_USER_KEY_SIGN);
+    session.remove(SESSION_USER_KEY);
+    web_util::ok_without_data()
+}
