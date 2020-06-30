@@ -7,4 +7,7 @@ tl:
            sign: 
                      salt:  This2020YearRustCms
            template: 
-                               name: freelancer
+                               name: freelancer 
+           upload:
+                       path: /data/test/upload/
+                       max_size:  1 0 #上传文件大小限制，单位MB，可以使用小数

@@ -52,3 +52,7 @@ pub fn forbidden_with_errmsg(msg: String)  -> impl Responder {
     HttpResponse::Forbidden().json(AjaxResult::<bool>::fail(msg))
     
 }
+
+pub fn internal_server_error(msg: String) -> impl Responder {
+    HttpResponse::InternalServerError().json(AjaxResult::<bool>::fail(msg))
+}

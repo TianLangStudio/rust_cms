@@ -13,6 +13,7 @@ mod web_util;
 mod userctrl;
 mod articlectrl;
 mod indexctrl;
+mod filectrl;
 mod middleware;
 
 #[actix_rt::main]

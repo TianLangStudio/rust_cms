@@ -4,14 +4,18 @@
 - [x]  session 
 - [x]  基于session的登录验证  
 - [x]  登录功能样例　 
+- [ ]   文件上传　　
+- [ ]   文章列表   
+- [ ]   发布文章　 
+- [ ]   文章详情　　
 ---  
 
 # 运行 
-** 请先安装Rust  **  
+**请先安装Rust**  
 
 > git clone git@github.com:TianLangStudio/rust_cms.git 
 > cd rust_cms 
-- 创建Mysql数据库　导入doc/db.sql  
+- 创建Mysql数据库　导入doc/rust_cms.sql  
 - 修改conf/application_dev.yaml文件中的数据库链接配置　
 > cargo run
 ---  
