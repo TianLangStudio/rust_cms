@@ -10,4 +10,4 @@ tl:
                                name: freelancer 
            upload:
                        path: /data/test/upload/
-                       max_size:  1 0 #上传文件大小限制，单位MB，可以使用小数
+                       max_size:  1 0.0 #上传文件大小限制，单位MB，可以使用小数

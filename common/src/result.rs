@@ -43,16 +43,16 @@ impl<T> AjaxResult<T> {
      }
 }
 
-pub fn ok_without_data() -> impl Responder {
+pub fn ok_without_data() -> HttpResponse {
     HttpResponse::Ok().json(AjaxResult::<bool>::success_without_data())
 }
 
-pub fn forbidden_with_errmsg(msg: String)  -> impl Responder { 
+pub fn forbidden_with_errmsg(msg: String)  -> HttpResponse { 
 
     HttpResponse::Forbidden().json(AjaxResult::<bool>::fail(msg))
     
 }
 
-pub fn internal_server_error(msg: String) -> impl Responder {
+pub fn internal_server_error(msg: String) -> HttpResponse {
     HttpResponse::InternalServerError().json(AjaxResult::<bool>::fail(msg))
 }

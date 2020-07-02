@@ -34,6 +34,8 @@ async fn main() -> std::io::Result<()> {
                     CookieSession::signed(&[0; 32]) // <- 添加使用cookie实现的session中间件
                         .secure(is_prod),
             )
+            .service(filectrl::upload)//文件上传api
+            .service(filectrl::view_file)//使用ID查看文件
             .service(userctrl::login) //用户登录接口
             .service(userctrl::logout)//退出登录
             .service(userctrl::register)//用户注册接口

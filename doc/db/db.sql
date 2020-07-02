@@ -20,5 +20,13 @@ CREATE TABLE `tb_article_content` (
     `article_id` varchar(40) NOT NULL  COMMENT 'article ID',
     `content` longtext COMMENT '文件内容',
        PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='文章' ;
-     
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='文章内容' ;
+
+CREATE TABLE `tb_file`   (
+  `id` varchar(40) NOT NULL COMMENT 'ID',
+  `name` varchar(200) DEFAULT '' COMMENT '文件名称',
+  `ext` varchar(200) DEFAULT '' COMMENT  '文件扩展名',
+  `is_private` int(1) DEFAULT 0  COMMENT  '是否私有文件 0：非私有、否　1:私有、是',
+  `creater` varchar(50) NOT NULL COMMENT '创建人',
+   PRIMARY KEY (`id`)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='文件' ;

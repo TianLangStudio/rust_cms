@@ -54,4 +54,4 @@ pub struct ArticleContentModel {
 pub struct  NewArticleContentModel<'a>{
     pub article_id: &'a str,
     pub content:  &'a str,
-}
+} 
