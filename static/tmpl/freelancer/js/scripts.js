@@ -43,6 +43,9 @@
   
     // Collapse Navbar
     var navbarCollapse = function() {
+      if( $("#mainNav").length == 0 ) {
+        return ;
+      }
       if ($("#mainNav").offset().top > 100) {
         $("#mainNav").addClass("navbar-shrink");
       } else {
@@ -50,7 +53,7 @@
       }
     };
     // Collapse now if page is not at top
-    navbarCollapse();
+   navbarCollapse();
     // Collapse the navbar when page is scrolled
     $(window).scroll(navbarCollapse);
   
@@ -68,6 +71,18 @@
   })(jQuery); // End of use strict
   
 //common begin
+// tl alter begin
+ var $tlAlter =    $('#tl-alter');
+ var $tlAlterTitle = $('#tl-alter-title');
+ var $tlAlterMsg = $('#tl-alter-msg');
+ $tlAlter.toast({delay: 5000});
+ function  tlShowAlter(title, msg) {
+    $tlAlterTitle.html(title);
+    $tlAlterMsg.html(msg);
+    $tlAlter.toast('show');
+ }
+ // tl alter end
+  
   function postJson(url, data, successCb, failCb) {
       $.ajax({
         type: "POST",
@@ -101,6 +116,7 @@ function apiRegister(data, successCb) {
 //api end
 
 //login begin
+var $userDdList = $('#user-dropdown-list');
 var $username = $('#tl-username');
 var $loginBtn = $('#tl-btn-login');
 var $logoutBtn = $('#tl-btn-logout');
@@ -108,11 +124,11 @@ var $logoutBtn = $('#tl-btn-logout');
 var $tlLoginUsernameIpt = $('#tl-login-username-ipt');
 var $tlLoginPasswordIpt = $('#tl-login-password-ipt');
 if($username.text().trim()) {
-  $loginBtn.hide();
-  $logoutBtn.show();
+  $userDdList.find('.login').show();
+  $userDdList.find('.logout').hide();
 }else {
-  $loginBtn.show();
-  $logoutBtn.hide();
+  $userDdList.find('.login').hide();
+  $userDdList.find('.logout').show();
 }
 
 $('#loginModal').on('click', '.login-btn',function(e) {

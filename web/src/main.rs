@@ -24,8 +24,16 @@ async fn main() -> std::io::Result<()> {
     //let app_config = config_util::APP_CONFIG;
     let is_prod = config_util::is_prod();
     let server = HttpServer::new(move || {
-        let tera =
-        Tera::new("template/**/*.html").unwrap();
+        let mut tera =
+        match Tera::new("template/**/*.html")  {
+            Ok(t) => t,
+            Err(e) => {
+                error!("Tera Parsing error: {}", e);
+                ::std::process::exit(1);
+            }
+         };
+         tera.full_reload();
+
         App::new()
             .data(tera)
             .data(db_util::POOL.clone()) //绑定数据库链接池
@@ -42,6 +50,7 @@ async fn main() -> std::io::Result<()> {
             .service(userctrl::admin_test)//用于测试AuthService中间件是否有效的接口
             .service(articlectrl::admin_add_article)//新增文章接口
             .service(articlectrl::admin_edit_article)//编辑文章接口
+            .service(articlectrl::admin_edit_view)
             .service(fs::Files::new("/static", "static").show_files_listing())//静态文件
             .service(indexctrl::favicon)//favicon
             .service(indexctrl::index)//首页

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+    
+    <head>
+        {% block head %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="天朗工作室教学代码演示">
+        <meta name="author" content="tianlangstudio@aliyun.com">
+        <title>天朗工作室</title>
+        <!-- Font Awesome icons (free version)-->
+        <script src="/static/com/fontawesome/5.13.1/js/all.min.js"  async crossorigin="anonymous"></script>
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="/static/tmpl/freelancer/css/styles.css" rel="stylesheet">
+        <!-- Fonts CSS-->
+        <link rel="stylesheet" href="/static/tmpl/freelancer/css/heading.css">
+        <link rel="stylesheet" href="/static/tmpl/freelancer/css/body.css">
+        {% endblock head %}
+    </head>
+    <body id="page-top">
+        {% block nav %}
+        <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
+            <div class="container"><a class="navbar-brand js-scroll-trigger" href="#page-top">天朗工作室</a>
+                <button class="navbar-toggler navbar-toggler-right font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu <i class="fas fa-bars"></i></button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">博客</a>
+                        </li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">我是谁</a>
+                        </li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">联系俺</a>
+                        </li>
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="tl-username">{{username}}</span>
+                            <img class="img-profile rounded-circle" src="/static/img/logo.png">
+                          </a>
+                          <!-- Dropdown - User Information -->
+                          <div  id="user-dropdown-list" class="dropdown-menu dropdown-menu-right shadow animated--grow-in  bg-primary text-white" aria-labelledby="userDropdown">
+                            <a class="dropdown-item login"  href="/article/admin/edit/add">
+                                <i class="fas fa-edit  fa-sm mr-2 text-gray-400"></i>
+                                写博客
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item login" id="tl-btn-logout"  data-toggle="modal" data-target="#logoutModal" href="#">
+                              <i class="fas fa-sign-out-alt fa-sm mr-2 text-gray-400"></i>
+                              退出
+                            </a>
+                            <a class="dropdown-item logout" id="tl-btn-login" href="#" data-toggle="modal" data-target="#loginModal">
+                                <i class="fas sign-in-altfa-sm  mr-2 text-gray-400"></i>
+                                登录
+                              </a>
+                          </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {% endblock nav %}
+        {% block content %}
+        <header class="masthead bg-primary  text-center">
+            <div class="container d-flex align-items-right flex-column">
+                <!-- Masthead Avatar Image--><!--img class="masthead-avatar mb-5" src="/static/tmpl/freelancer/assets/img/avataaars.svg" alt=""-->
+                <!-- Masthead Heading-->
+                <h5 class="masthead-heading mb-0">朱焕青@天朗工作室 </h5>
+                <!-- Icon Divider-->
+                <div class="divider-custom divider-light">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+                <!-- Masthead Subheading-->
+                <p class="pre-wrap masthead-subheading font-weight-light mb-0">一个不安分的程序员 </p>
+            </div>
+        </header>
+        <section class="page-section portfolio" id="portfolio">
+            <div class="container">
+                <!-- Portfolio Section Heading-->
+                <div class="text-center">
+                    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">博客</h2>
+                </div>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+                <!-- Portfolio Grid Items-->
+                <div class="row justify-content-center">
+                    <!-- Portfolio Items-->
+                    <!--div class="col-md-6 col-lg-4 mb-5">
+                        <div class="portfolio-item mx-auto">
+                            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                                <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                            </div><img class="img-fluid" src="assets/img/portfolio/cabin.png" alt="Log Cabin"/>
+                        </div>
+                    </div-->
+                </div>
+            </div>
+        </section>
+        <section class="page-section bg-primary text-white mb-0" id="about">
+            <div class="container">
+                <!-- About Section Heading-->
+                <div class="text-center">
+                    <h2 class="page-section-heading d-inline-block text-white">谁是我 </h2>
+                </div>
+                <!-- Icon Divider-->
+                <div class="divider-custom divider-light">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+                <!-- About Section Content-->
+                <div class="row">
+                    <div class="col-lg-4 ml-auto">
+                        <p class="pre-wrap lead">编程是需要动手的艺术</p>
+                    </div>
+                    <div class="col-lg-4 mr-auto">
+                        <p class="pre-wrap lead">愿做技术社区的一股清流，让技术帮助更多的人</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="page-section" id="contact">
+            <div class="container">
+                <!-- Contact Section Heading-->
+                <div class="text-center">
+                    <h2 class="page-section-heading text-secondary d-inline-block mb-0">联系俺 </h2>
+                </div>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+                <!-- Contact Section Content-->
+                <div class="row justify-content-center">
+                    <div class="col-lg-4">
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="icon-contact mb-3"><i class="far fa-envelope"></i></div>
+                            <div class="text-muted">Email</div><a class="lead font-weight-bold" href="mailto:tianlangstudio@aliyun.com">tianlangstudio@aliyun.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="footer text-center">
+            <div class="container">
+                <div class="row">
+                    <!-- Footer Location-->
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <h4 class="mb-4">俺在哪里</h4>
+                        <p class="pre-wrap lead mb-0">在深圳嘞河南人</p>
+                    </div>
+                    <!-- Footer Social Icons-->
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <h4 class="mb-4">多看看俺</h4>
+                        <a class="btn btn-outline-light btn-social mx-1" target="_blank" href="https://edu.51cto.com/sd/aca72">
+                               51cto
+                        </a>
+                        <a class="btn btn-outline-light btn-social mx-1" target="_blank" href="https://pan.baidu.com/mall/home/shop?sid=359684">
+                                baidu
+                        </a>
+                     <a class="btn btn-outline-light btn-social mx-1" target="_blank" href="https://www.iqiyi.com/u/1826995037/feeds">
+                                iqiyi
+                        </a>
+                        <a class="btn btn-outline-light btn-social mx-1" target="_blank" href="https://github.com/TianLangStudio/">
+                                github
+                        </a>
+                
+                    </div>
+                    <!-- Footer About Text-->
+                    <div class="col-lg-4">
+                        <h4 class="mb-4">可别怪俺</h4>
+                        <p class="pre-wrap lead mb-0">此网站用于功能（教学）演示，数据定期删除，不保证可用性</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!---modal begin---->
+        <div class="portfolio-modal modal fade" id="loginModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="dialog">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
+                                        <!-- Outer Row -->
+                        <div class="row justify-content-center">
+
+                            <div class="col-xl-10 col-lg-12 col-md-9">
+                    
+                            <div class="card o-hidden border-0 shadow-lg my-5">
+                                <div class="card-body p-0">
+                                <!-- Nested Row within Card Body -->
+                                <div class="row">
+                                    <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                                    <div class="col-lg-6">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">欢迎回来</h1>
+                                        </div>
+                                        <form class="user">
+                                        <div class="form-group">
+                                            <input type="email" class="form-control form-control-user"  value="zhangsan" id="tl-login-username-ipt" aria-describedby="emailHelp" placeholder="请输入登录用户名">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password" class="form-control form-control-user"  value="123456" id="tl-login-password-ipt" placeholder="密码">
+                                        </div>
+                                        <div class="btn btn-primary login-btn">
+                                            登录
+                                        </div>
+                                        </form>
+                                    </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                    
+                            </div>
+                    
+                        </div>
+                </div>
+            </div>
+        </div>
+        <div class="portfolio-modal modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="dialog">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
+                                        <!-- Outer Row -->
+                    <div class="text-left">确定退出登录？</div>                   
+                    <div class="btn btn-danger float-right logout-btn">退出登录</div>
+                </div>
+            </div>
+        </div>
+        {% endblock content %}
+        <!---modal end-->
+        {% block footer%}
+        <!-- Copyright Section-->
+        <section class="copyright py-4 text-center text-white">
+            <div class="container"><small class="pre-wrap">Copyright © tianlangstudio@aliyun.com </small></div>
+        </section>
+        <div style="display: none;"  id="tl-alter" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+              <strong class="mr-auto" id="tl-alter-title"></strong>
+              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div  id="tl-alter-msg" class="toast-body">
+                 
+            </div>
+          </div>
+        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+        <div class="scroll-to-top d-lg-none position-fixed"><a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a></div>
+        <!-- Bootstrap core JS-->
+        <script src="/static/js/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+        <!-- Third party plugin JS-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="/static/tmpl/freelancer/js/scripts.js"></script>
+        {% endblock footer %}
+    </body>
+</html>
