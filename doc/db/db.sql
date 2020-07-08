@@ -12,6 +12,7 @@ CREATE TABLE `tb_article` (
       `title` varchar(200) DEFAULT '' COMMENT '文章标题',
       `subtitle` varchar(200) DEFAULT '' COMMENT '文章副标题',
       `intro` varchar(300) DEFAULT '' COMMENT '文章简介',
+      `creater` varchar(50) NOT NULL COMMENT '创建人',
         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='文章' ;
 

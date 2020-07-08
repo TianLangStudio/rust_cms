@@ -71,17 +71,17 @@
   })(jQuery); // End of use strict
   
 //common begin
-// tl alter begin
- var $tlAlter =    $('#tl-alter');
- var $tlAlterTitle = $('#tl-alter-title');
- var $tlAlterMsg = $('#tl-alter-msg');
+// tl alert begin
+ var $tlAlter =    $('#tl-alert');
+ var $tlAlterTitle = $('#tl-alert-title');
+ var $tlAlterMsg = $('#tl-alert-msg');
  $tlAlter.toast({delay: 5000});
- function  tlShowAlter(title, msg) {
+ function  tlShowAlert(title, msg) {
     $tlAlterTitle.html(title);
     $tlAlterMsg.html(msg);
     $tlAlter.toast('show');
  }
- // tl alter end
+ // tl alert end
   
   function postJson(url, data, successCb, failCb) {
       $.ajax({

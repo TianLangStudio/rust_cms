@@ -31,3 +31,9 @@ pub fn uuid() -> String {
     uuid::Uuid::new_v4().to_string()
 }
 
+
+pub fn page2limit_offset(page_no: i64, page_size: i64) -> (i64, i64) {
+        let page_no = 0.max(--page_no); 
+        let page_size = 1000.min(page_size).max(0);
+        (page_size,  page_no * page_size)
+}   

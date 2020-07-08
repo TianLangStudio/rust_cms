@@ -5,7 +5,7 @@ use actix_files as fs;
 use actix_session::{CookieSession};
 use rustls::{NoClientAuth, ServerConfig};
 use rustls::internal::pemfile::{certs, rsa_private_keys};
-use tera::Tera;
+use tera::{Tera};
 use log::*;
 
 use common::{log_util, config_util, db_util};
@@ -15,6 +15,7 @@ mod articlectrl;
 mod indexctrl;
 mod filectrl;
 mod middleware;
+mod funs;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -32,7 +33,9 @@ async fn main() -> std::io::Result<()> {
                 ::std::process::exit(1);
             }
          };
-         tera.full_reload();
+
+         tera.register_function("list_new_articles", funs::article::make_list_new_articles(db_util::POOL.clone()));
+       //  tera.full_reload();
 
         App::new()
             .data(tera)

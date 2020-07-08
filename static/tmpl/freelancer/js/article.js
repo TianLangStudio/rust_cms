@@ -16,7 +16,7 @@
     }
 
     function getIntro() {
-        return $content.text().substr(0, 100);
+        return $(getArticleContent()).text().substr(0, 100);
     }
 
     var  $tlPublishBtn = $('#tl-publish-btn');

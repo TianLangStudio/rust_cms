@@ -4,6 +4,7 @@ table! {
         title -> Nullable<Varchar>,
         subtitle -> Nullable<Varchar>,
         intro -> Nullable<Varchar>,
+        creater -> Varchar,
     }
 }
 
