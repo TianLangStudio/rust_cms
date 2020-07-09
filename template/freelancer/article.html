@@ -1,0 +1,40 @@
+{% extends "freelancer/common/base.html" %}
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="/static/tmpl/freelancer/css/article.css" />
+{% endblock head %}
+
+{% block content%}
+  <!-- Page Header -->
+  <header class="masthead">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>{{article_info.title}}</h1>
+            <h2 class="subheading">{{article_info.subtitle}}</h2>
+            <span class="meta">由
+              <a href="#">{{article_info.creater}}</a> 
+              于2019年7月7日发布
+            </span>
+              {% if  article_info.creater == username %} 
+                    <span class="meta text-right">
+                            <a target="_blank" href="/article/admin/edit/{{article_info.id}}">编辑</a>
+                    </span>
+              {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            {{article_content.content | safe}}
+        </div>
+    </div>
+    </div>
+    </article>
+{% endblock content%}

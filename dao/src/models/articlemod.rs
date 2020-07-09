@@ -33,9 +33,17 @@ pub struct NewArticle {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct EditArticle {
+       pub id: String,
+       pub title: Option<String>,
+       pub subtitle: Option<String>,
+       pub intro: Option<String>,
+       pub content:  Option<String>,
+}
+
 #[derive(AsChangeset)]
 #[table_name="tb_article"]
-pub struct EditArticle {
+pub struct EditArticleModel {
        pub id: String,
        pub title: Option<String>,
        pub subtitle: Option<String>,
@@ -45,6 +53,7 @@ pub struct EditArticle {
 #[derive(AsChangeset)]
 #[derive(Queryable)]
 #[table_name = "tb_article_content"]
+#[derive(Serialize, Deserialize)]
 pub struct ArticleContentModel {
     id: i64,
     article_id: String,

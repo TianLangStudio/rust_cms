@@ -33,9 +33,16 @@
             {% for article in list_new_articles(page_no=0, page_size=6) %}
             <div class="col-md-6 col-lg-4 mb-5">
                 <div class="portfolio-item mx-auto">
+                    <a target="_blank" href="/view/article/{{article.id}}">
                     <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
-                        <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                    </div>{{loop.index}}<img class="img-fluid" src="assets/img/portfolio/cabin.png" alt="Log Cabin"/>
+                        <div class="portfolio-item-caption-content text-center text-white">
+                            点击查看
+                        </div>
+                    </div>
+                    <div class="article-title text-truncate">{{article.title}}</div>
+                    <div class="article-subtitle text-truncate">{{article.subtitle}}</div>
+                    <div class="article-intro text-break">{{article.intro | truncate(length=50) }}</div>
+                    </a>
                 </div>
             </div>
             {% endfor %}
@@ -83,6 +90,12 @@
                 <div class="d-flex flex-column align-items-center">
                     <div class="icon-contact mb-3"><i class="far fa-envelope"></i></div>
                     <div class="text-muted">Email</div><a class="lead font-weight-bold" href="mailto:tianlangstudio@aliyun.com">tianlangstudio@aliyun.com</a>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="d-flex flex-column align-items-center">
+                    <div class="icon-contact mb-3"><img class="contract-qq-group" src="/static/img/qqgroup-keeplearning.png"/></div>
+                    <div class="text-muted">QQ群</div><a class="lead font-weight-bold" href="#">579896894</a>
                 </div>
             </div>
         </div>

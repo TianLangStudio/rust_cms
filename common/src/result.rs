@@ -56,3 +56,7 @@ pub fn forbidden_with_errmsg(msg: String)  -> HttpResponse {
 pub fn internal_server_error(msg: String) -> HttpResponse {
     HttpResponse::InternalServerError().json(AjaxResult::<bool>::fail(msg))
 }
+
+pub fn server_busy_error() -> HttpResponse {
+    internal_server_error(String::from("服务器繁忙请稍后再试"))
+}

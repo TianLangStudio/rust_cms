@@ -19,9 +19,15 @@
         return $(getArticleContent()).text().substr(0, 100);
     }
 
+    function get_article_id() {
+        return $('#tl-article-id').val()
+    }
     var  $tlPublishBtn = $('#tl-publish-btn');
     $tlPublishBtn.click(function() {
-        postJson('/api/article/admin/add', {
+        var articleId = get_article_id();
+        var url = articleId ?  '/api/article/admin/edit': '/api/article/admin/add';
+        postJson(url, {
+            id:  articleId,
             title: getArticleName(),
             intro: getIntro(),
             content: getArticleContent()

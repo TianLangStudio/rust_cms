@@ -53,7 +53,8 @@ async fn main() -> std::io::Result<()> {
             .service(userctrl::admin_test)//用于测试AuthService中间件是否有效的接口
             .service(articlectrl::admin_add_article)//新增文章接口
             .service(articlectrl::admin_edit_article)//编辑文章接口
-            .service(articlectrl::admin_edit_view)
+            .service(articlectrl::admin_edit_view)//文章编辑页面
+            .service(articlectrl::view_article_by_id)//文章详情页面
             .service(fs::Files::new("/static", "static").show_files_listing())//静态文件
             .service(indexctrl::favicon)//favicon
             .service(indexctrl::index)//首页

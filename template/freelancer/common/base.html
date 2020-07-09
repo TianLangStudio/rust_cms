@@ -24,11 +24,13 @@
                 <button class="navbar-toggler navbar-toggler-right font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu <i class="fas fa-bars"></i></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">博客</a>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/">首页</a>
                         </li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">我是谁</a>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/#portfolio">博客</a>
                         </li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">联系俺</a>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/#about">我是谁</a>
+                        </li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/#contact">联系俺</a>
                         </li>
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -180,6 +182,14 @@
                 </div>
             </div>
         </footer>
+        
+        {% endblock content %}
+        <!---modal end-->
+        {% block footer%}
+        <!-- Copyright Section-->
+        <section class="copyright py-4 text-center text-white">
+            <div class="container"><small class="pre-wrap">Copyright © tianlangstudio@aliyun.com </small></div>
+        </section>
         <!---modal begin---->
         <div class="portfolio-modal modal fade" id="loginModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="dialog">
@@ -233,13 +243,6 @@
                 </div>
             </div>
         </div>
-        {% endblock content %}
-        <!---modal end-->
-        {% block footer%}
-        <!-- Copyright Section-->
-        <section class="copyright py-4 text-center text-white">
-            <div class="container"><small class="pre-wrap">Copyright © tianlangstudio@aliyun.com </small></div>
-        </section>
         <div style="display: none;"  id="tl-alert" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
               <strong class="mr-auto" id="tl-alert-title"></strong>

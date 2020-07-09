@@ -34,8 +34,31 @@ async fn admin_add_article(
 
 #[post("/api/article/admin/edit")]
 async fn admin_edit_article( pool: web::Data<Pool>,   edit_article: web::Json<EditArticle> ) -> impl Responder {
-        match articlerepo::edit_article_info(&pool.get().unwrap(),  &edit_article) {
-            Ok(_) =>  HttpResponse::Ok().json(result::AjaxResult::<bool>::success_without_data()),
+        let conn = match db_util::get_conn(&pool) {
+            Some(conn) => conn,
+            None => return result::server_busy_error()
+        };
+        let edit_article_model = EditArticleModel {
+            id: edit_article.id.clone(),
+            title: edit_article.title.clone(),
+            subtitle: edit_article.subtitle.clone(),
+            intro: edit_article.intro.clone(),
+        };
+        match articlerepo::edit_article_info(&conn,  &edit_article_model) {
+            Ok(_) =>  {
+               if let Some(content) =  &edit_article.content  {
+                    let new_article_content = NewArticleContentModel {
+                        article_id: &edit_article.id,
+                        content:  &content
+                    };
+                   match  articlerepo::edit_article_content(&conn,  &new_article_content) {
+                       Ok(_) => (),
+                       Err(err) => return result::forbidden_with_errmsg(err.to_string())
+                   };
+                   
+                }
+                HttpResponse::Ok().json(result::AjaxResult::<bool>::success_without_data())
+            },
             Err(err) => HttpResponse::Forbidden().json(result::AjaxResult::<bool>::fail(err.to_string()))
         }
     }
@@ -46,7 +69,7 @@ async fn list_article(
 ) -> Result<HttpResponse, Error> {
      let conn = match db_util::get_conn(&pool) {
          Some(conn) => conn,
-         None => return Ok(result::internal_server_error(String::from("服务器繁忙请稍后再试")))
+         None => return Ok(result::server_busy_error())
      };
 
     match articlerepo::list_new_article(&conn,  page.0, page.1) {
@@ -56,6 +79,45 @@ async fn list_article(
         )
     }
 }
+
+#[get("/view/article/{article_id}")]
+async fn view_article_by_id(
+    path_params: web::Path<(String, )>,
+    session: Session,
+    pool: web::Data<Pool>,
+    tmpl: web::Data<Tera>
+) -> Result<HttpResponse, Error> {
+    let  mut render_context = tera::Context::new();
+    let conn = match db_util::get_conn(&pool) {
+        Some(conn) => conn,
+        _ => return Ok(result::internal_server_error(String::from("服务器繁忙请稍后再试")))
+    };
+
+    let article_id = &path_params.0;
+
+    let article_info = articlerepo::find_article_by_id(&conn,  &article_id);
+    
+    let article_content = articlerepo::find_article_content_by_id(&conn,  &article_id);
+
+    let article_content =  match article_content  {
+        Ok(article_content) => article_content,
+        _ => return Ok(result::internal_server_error(String::from("服务器繁忙请稍后再试")))
+    };
+    let article_info = match article_info  {
+        Ok(article_info) => article_info,
+        _ => return Ok(result::internal_server_error(String::from("服务器繁忙请稍后再试")))
+    };
+
+    
+    render_context.insert("article_info", &article_info);
+    render_context.insert("article_content",  &article_content);
+    let username = web_util::get_username_from_session(&session).unwrap_or(String::from(""));
+    render_context.insert("username",  &username);
+    let tmpl_name = web_util::get_tmpl_from_session(&session) + "/article.html";
+    let body = tmpl.render(&tmpl_name,  &render_context).unwrap();
+    Ok(HttpResponse::Ok().content_type("text/html").body(body))
+}
+
 #[get("/article/admin/edit/{article_id}")]
 async fn admin_edit_view(
     path_params: web::Path<(String,)>,

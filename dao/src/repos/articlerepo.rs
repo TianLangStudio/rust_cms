@@ -28,15 +28,21 @@ pub  fn add_article(conn:  &DbConnection, new_article: &NewArticle, username: &s
                 article_id: &new_article_model.id,
                 content:  &content,
             };
-            diesel::insert_into(tb_article_content::table).values(&new_article_content).execute(conn)?;
+            edit_article_content(conn, &new_article_content)?;
             diesel::insert_into(tb_article::table).values(&new_article_model).execute(conn)
         })
 }
 
-pub fn edit_article_info(conn: &DbConnection,  edit_article: &EditArticle)  -> Result<usize,  Error>  {
+pub fn edit_article_info(conn: &DbConnection,  edit_article: &EditArticleModel)  -> Result<usize,  Error>  {
     diesel::update(tb_article::table).set(edit_article).execute(conn)
 }
 
+/**
+ * 文章内容更新并不更新原来的记录而是新增记录，这样后期可以支持回滚，多版本
+ * **/
+pub fn edit_article_content(conn: &DbConnection, new_article_content: &NewArticleContentModel) -> Result<usize, Error> {
+    diesel::insert_into(tb_article_content::table).values(new_article_content).execute(conn)
+}
 
 pub fn list_new_article(conn: &DbConnection, page_no: i64,  page_size: i64) -> Result<Vec<ArticleModel>, Error> {
     use self::tb_article::dsl::*;

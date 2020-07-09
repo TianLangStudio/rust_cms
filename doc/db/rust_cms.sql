@@ -62,6 +62,7 @@ CREATE TABLE `tb_article` (
 
 LOCK TABLES `tb_article` WRITE;
 /*!40000 ALTER TABLE `tb_article` DISABLE KEYS */;
+INSERT INTO `tb_article` VALUES ('7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','helloworld','','hello world editor','zhangsan');
 /*!40000 ALTER TABLE `tb_article` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -77,7 +78,7 @@ CREATE TABLE `tb_article_content` (
   `article_id` varchar(40) NOT NULL COMMENT 'article ID',
   `content` longtext COMMENT '文件内容',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章内容';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='文章内容';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -86,6 +87,7 @@ CREATE TABLE `tb_article_content` (
 
 LOCK TABLES `tb_article_content` WRITE;
 /*!40000 ALTER TABLE `tb_article_content` DISABLE KEYS */;
+INSERT INTO `tb_article_content` VALUES (2,'7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','<b>hello world&nbsp;</b>'),(3,'7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','\n                 <b>hello world editor</b>');
 /*!40000 ALTER TABLE `tb_article_content` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,4 +153,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-07 19:29:05
+-- Dump completed on 2020-07-09 22:33:00
