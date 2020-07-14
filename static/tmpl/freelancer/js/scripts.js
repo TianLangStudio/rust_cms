@@ -80,8 +80,28 @@
     $tlAlterTitle.html(title);
     $tlAlterMsg.html(msg);
     $tlAlter.toast('show');
+ } 
+
+ function tlShowSucMsg(title, msg) {
+  tlShowAlert(title , msg);
  }
- // tl alert end
+
+ function tlDisableBtn($btn,  time)  {
+   if($btn.attr('disabled'))  {
+     return false;
+   }
+  $btn.attr('disabled', true);
+  var $loading = $btn.find('.loading');
+  $loading.show();
+  var time = time || 5;
+  setTimeout(function() {
+    $btn.attr('disabled', false);
+    $loading.hide();
+  }, time * 1000);
+  return true;
+ }
+
+ // tl alert end 
   
   function postJson(url, data, successCb, failCb) {
       $.ajax({
@@ -150,3 +170,15 @@ $('#logoutModal').on('click', '.logout-btn', function(e) {
   })
 })
 //login end
+
+//share begin   
+$(function() {
+
+    $("#tl-share-btn").socialShare({
+      content: 'helloworld',
+      url:'helloworld',
+      titile:''
+    });
+
+});
+//share end

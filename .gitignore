@@ -1,5 +1,6 @@
 /target
 *.iml
+*.zip
 /.idea
 
 

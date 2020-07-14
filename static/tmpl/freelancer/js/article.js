@@ -24,15 +24,32 @@
     }
     var  $tlPublishBtn = $('#tl-publish-btn');
     $tlPublishBtn.click(function() {
+        if(!tlDisableBtn($tlPublishBtn)) {
+            tlShowAlert("您好", "操作太频繁了，请稍候再试");
+            return false;
+        }
         var articleId = get_article_id();
         var url = articleId ?  '/api/article/admin/edit': '/api/article/admin/add';
-        postJson(url, {
+         var articleName  = getArticleName();
+         if(!articleName) {
+            tlShowAlert("您好", "请填写名称后再提交");
+            return false;
+         }
+         var articleContent  = getArticleContent();
+         if(!articleContent) {
+            tlShowAlert("您好", "请填写文章内容后再提交");
+            return false;
+         }
+       
+        postJson(url, { 
             id:  articleId,
-            title: getArticleName(),
+            title: articleName,
             intro: getIntro(),
-            content: getArticleContent()
+            content: articleContent
         }, function(resp) {
-                console.log(resp);
+            tlShowSucMsg("成功了",  "文章已提交成功!");
+        }, function(resp) {
+            tlShowAlert("您好", "文章提交失败了!" + resp.msg);
         })
     });
 

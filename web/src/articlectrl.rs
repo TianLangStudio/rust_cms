@@ -52,7 +52,9 @@ async fn admin_edit_article( pool: web::Data<Pool>,   edit_article: web::Json<Ed
                         content:  &content
                     };
                    match  articlerepo::edit_article_content(&conn,  &new_article_content) {
-                       Ok(_) => (),
+                       Ok(_) => {
+                           let _ = articlerepo::remove_article_content(&conn,  3,  &edit_article.id);
+                       },
                        Err(err) => return result::forbidden_with_errmsg(err.to_string())
                    };
                    

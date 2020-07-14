@@ -44,6 +44,34 @@ pub fn edit_article_content(conn: &DbConnection, new_article_content: &NewArticl
     diesel::insert_into(tb_article_content::table).values(new_article_content).execute(conn)
 }
 
+/**
+ * 
+ * 保留最近的saved条记录，其它 的删除
+ * **/
+
+pub fn remove_article_content(conn: &DbConnection,  saved: i64,  article_id_find: &str) -> Result<usize, Error> {
+    use self::tb_article_content::dsl::*;
+    let mut filter = tb_article_content.filter(article_id.eq(article_id_find))
+                                                                . order(id.desc())
+                                                                .limit(10)
+                                                                .offset(saved)
+                                                                .load::<ArticleContentModel>(conn);
+                                            
+    match filter  {
+        Ok(article_contents) if  article_contents.len() > 0  => {
+            let removed: Vec<i64> = article_contents.iter().map(|article| article.id ).collect();
+            diesel::delete(
+                tb_article_content.filter(
+                        id.eq_any(
+                            removed
+                        )
+                )
+            ).execute(conn)
+        },
+        _ => Ok(0)
+    }
+ 
+}
 pub fn list_new_article(conn: &DbConnection, page_no: i64,  page_size: i64) -> Result<Vec<ArticleModel>, Error> {
     use self::tb_article::dsl::*;
     let (limit, offset) = db_util::page2limit_offset(page_no, page_size);
