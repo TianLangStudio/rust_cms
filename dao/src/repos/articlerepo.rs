@@ -7,6 +7,7 @@ use common::{db_util};
 use log::{info, warn};
 
 pub type DbConnection = db_util::DbConnection;
+pub type ListAriticleResult = Result<Vec<ArticleModel>, Error>;
 
 pub  fn add_article(conn:  &DbConnection, new_article: &NewArticle, username: &str) -> Result<usize,  Error> {
        
@@ -33,7 +34,7 @@ pub  fn add_article(conn:  &DbConnection, new_article: &NewArticle, username: &s
         })
 }
 
-pub fn edit_article_info(conn: &DbConnection,  edit_article: &EditArticleModel)  -> Result<usize,  Error>  {
+pub fn edit_article_info(conn: &DbConnection,  edit_article: &ArticleModel)  -> Result<usize,  Error>  {
     diesel::update(tb_article::table).set(edit_article).execute(conn)
 }
 
@@ -72,11 +73,17 @@ pub fn remove_article_content(conn: &DbConnection,  saved: i64,  article_id_find
     }
  
 }
-pub fn list_new_article(conn: &DbConnection, page_no: i64,  page_size: i64) -> Result<Vec<ArticleModel>, Error> {
+pub fn list_new_article(conn: &DbConnection, page_no: i64,  page_size: i64) -> ListAriticleResult {
     use self::tb_article::dsl::*;
     let (limit, offset) = db_util::page2limit_offset(page_no, page_size);
 
-    tb_article.limit(limit).offset(offset).load::<ArticleModel>(conn)
+    tb_article.order(id.desc()).limit(limit).offset(offset).load::<ArticleModel>(conn)
+}
+
+pub fn list_recommend_article(conn: &DbConnection, page_no: i64, page_size: i64) -> ListAriticleResult {
+    use self::tb_article::dsl::*;
+    let (limit, offset) = db_util::page2limit_offset(page_no, page_size);
+    tb_article.order(rcmd_weight.desc()).limit(limit).offset(offset).load::<ArticleModel>(conn)
 }
 
 pub fn find_article_by_id(conn: &DbConnection, id: &str) -> Result<ArticleModel, Error> {

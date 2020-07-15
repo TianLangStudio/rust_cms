@@ -11,6 +11,8 @@ pub struct ArticleModel {
     pub title: Option<String>,
     pub subtitle: Option<String>,
     pub intro: Option<String>,
+    pub rcmd_weight: Option<i32>,
+    pub url: Option<String>,
     pub creater: String,
 }
 
@@ -29,7 +31,9 @@ pub struct NewArticle {
     pub title : String,
     pub subtitle: Option<String>,
     pub intro: String,
-    pub content: String
+    pub content: String,
+    pub rcmd_weight: Option<i32>,
+    pub url: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -38,9 +42,12 @@ pub struct EditArticle {
        pub title: Option<String>,
        pub subtitle: Option<String>,
        pub intro: Option<String>,
+       pub rcmd_weight: Option<i32>,
+       pub url: Option<String>,
        pub content:  Option<String>,
+       
 }
-
+/*
 #[derive(AsChangeset)]
 #[table_name="tb_article"]
 pub struct EditArticleModel {
@@ -49,6 +56,8 @@ pub struct EditArticleModel {
        pub subtitle: Option<String>,
        pub intro: Option<String>,
 }
+
+*/
 
 #[derive(AsChangeset)]
 #[derive(Queryable)]

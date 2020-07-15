@@ -1,5 +1,7 @@
 use actix_session::Session;
 use actix_web::{HttpResponse, Responder};
+use serde::{Deserialize, Serialize};
+
 use common::config_util;
 use common::result;
 use common::sign_util::*;
@@ -23,10 +25,34 @@ pub fn get_username_from_session(session: &Session) -> Option<String>{
     }
 }
 
+pub fn get_username(session: &Session) -> String {
+    match get_username_from_session(session) {
+        Some(username) => username,
+        None => String::from("")
+    }
+}
+
+pub fn new_render_context(session: &Session) -> tera::Context {
+       let  mut render_context = tera::Context::new();
+       render_context.insert("username", &get_username(session));
+       render_context
+}
+
+pub fn render_html(session: &Session,  render_context: &tera::Context,  tmpl: &tera::Tera, name: &str) -> HttpResponse {
+    let tmpl_name = get_tmpl_from_session(&session) + "/" + name + ".html";
+    let body = tmpl.render(&tmpl_name,  render_context).unwrap();
+    HttpResponse::Ok().content_type("text/html").body(body)
+}
 pub fn get_tmpl_from_session(_session: &Session) -> String  {
        config_util::APP_CONFIG.get_str("tl.app.template.name").expect("default template name is required")
 }
 
 pub fn ok_without_data() -> impl Responder {
     HttpResponse::Ok().json(result::AjaxResult::<bool>::success_without_data())
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Page {
+    pub page_no: Option<i64>,
+    pub page_size: Option<i64>,
 }

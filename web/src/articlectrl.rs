@@ -33,16 +33,23 @@ async fn admin_add_article(
 }
 
 #[post("/api/article/admin/edit")]
-async fn admin_edit_article( pool: web::Data<Pool>,   edit_article: web::Json<EditArticle> ) -> impl Responder {
+async fn admin_edit_article( pool: web::Data<Pool>,    
+                                                            session: Session,  
+                                                            edit_article: web::Json<EditArticle> ) -> impl Responder {
         let conn = match db_util::get_conn(&pool) {
             Some(conn) => conn,
             None => return result::server_busy_error()
         };
-        let edit_article_model = EditArticleModel {
+        let username = web_util::get_username_from_session(&session).unwrap();
+
+        let edit_article_model = ArticleModel {
             id: edit_article.id.clone(),
             title: edit_article.title.clone(),
             subtitle: edit_article.subtitle.clone(),
             intro: edit_article.intro.clone(),
+            rcmd_weight: edit_article.rcmd_weight.clone(),
+            url: edit_article.url.clone(),
+            creater: username,
         };
         match articlerepo::edit_article_info(&conn,  &edit_article_model) {
             Ok(_) =>  {
@@ -80,6 +87,29 @@ async fn list_article(
             error::ErrorInternalServerError(err)
         )
     }
+}
+
+
+#[get("/view/articles")]
+async fn view_articles(
+    query_param: web::Query<web_util::Page>, 
+    session: Session,
+    pool: web::Data<Pool>,
+    tmpl: web::Data<Tera>
+) -> Result<HttpResponse, Error> {
+            let query_param = query_param.0;
+            let page_no = query_param.page_no.unwrap_or(1);
+            let page_size = query_param.page_size.unwrap_or(7);
+
+            info!("page_no:{}, page_size:{}", page_no, page_size);
+
+            let  mut render_context = web_util::new_render_context(&session);
+
+            render_context.insert("page_no",  &page_no);
+            render_context.insert("page_size", &page_size);
+           Ok(
+               web_util::render_html(&session,  &render_context, &tmpl, "articles" )
+            )
 }
 
 #[get("/view/article/{article_id}")]

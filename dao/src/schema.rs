@@ -4,6 +4,8 @@ table! {
         title -> Nullable<Varchar>,
         subtitle -> Nullable<Varchar>,
         intro -> Nullable<Varchar>,
+        rcmd_weight -> Nullable<Integer>,
+        url -> Nullable<Varchar>,
         creater -> Varchar,
     }
 }

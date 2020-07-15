@@ -30,10 +30,15 @@
         <!-- Portfolio Grid Items-->
         <div class="row justify-content-center">
             <!-- Portfolio Items-->
-            {% for article in list_new_articles(page_no=0, page_size=6) %}
+            {% for article in list_recommend_articles(page_no=0, page_size=6) %}
             <div class="col-md-6 col-lg-4 mb-5">
                 <div class="portfolio-item mx-auto">
-                    <a target="_blank" href="/view/article/{{article.id}}">
+                    {% if article.url %}
+                       {%set article_url=article.url %}
+                    {% else %}
+                        {%set article_url='/view/article/' ~ article.id %}
+                    {% endif %}
+                    <a target="_blank" href=" {{article_url}}">
                     <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                         <div class="portfolio-item-caption-content text-center text-white">
                             点击查看
@@ -46,6 +51,20 @@
                 </div>
             </div>
             {% endfor %}
+            <div class="col-md-6 col-lg-4 mb-5">
+                <div class="portfolio-item mx-auto">
+                    <a target="_blank" href="/view/articles">
+                    <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                        <div class="portfolio-item-caption-content text-center text-white">
+                            点击查看更多
+                        </div>
+                    </div>
+                    <div class="article-title text-truncate">查看更多</div>
+                    <div class="article-subtitle text-truncate"></div>
+                    <div class="article-intro text-break"></div>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </section>

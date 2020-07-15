@@ -16,6 +16,10 @@ CREATE TABLE `tb_article` (
         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='文章' ;
 
+alter table tb_article add column rcmd_weight int(3) after intro COMMENT  '推荐权重';
+
+
+
 CREATE TABLE `tb_article_content` (
     `id` bigint(18) NOT NULL auto_increment COMMENT 'ID',
     `article_id` varchar(40) NOT NULL  COMMENT 'article ID',
