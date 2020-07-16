@@ -7,6 +7,8 @@ table! {
         rcmd_weight -> Nullable<Integer>,
         url -> Nullable<Varchar>,
         creater -> Varchar,
+        create_at -> Datetime,
+        update_at -> Datetime,
     }
 }
 

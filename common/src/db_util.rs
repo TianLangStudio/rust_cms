@@ -33,7 +33,10 @@ pub fn uuid() -> String {
 
 
 pub fn page2limit_offset(page_no: i64, page_size: i64) -> (i64, i64) {
-        let page_no = 0.max(--page_no); 
+        let page_no = page_no -1;
+        let page_no = 0.max(page_no); 
         let page_size = 1000.min(page_size).max(0);
+        info!("page_no:{}, page_size:{}", &page_no, &page_size);
+
         (page_size,  page_no * page_size)
 }   

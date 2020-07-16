@@ -1,3 +1,6 @@
+use std::time::SystemTime;
+
+
 use crate::models::articlemod::*;
 use crate::repos;
 use crate::schema::{tb_article, tb_article_content};
@@ -9,7 +12,7 @@ use log::{info, warn};
 pub type DbConnection = db_util::DbConnection;
 pub type ListAriticleResult = Result<Vec<ArticleModel>, Error>;
 
-pub  fn add_article(conn:  &DbConnection, new_article: &NewArticle, username: &str) -> Result<usize,  Error> {
+pub  fn add_article(conn:  &DbConnection, new_article: NewArticle, username: &str) -> Result<usize,  Error> {
        
         conn.transaction::<_, Error, _>(|| {
              let id: String = db_util::uuid();
@@ -18,12 +21,16 @@ pub  fn add_article(conn:  &DbConnection, new_article: &NewArticle, username: &s
                 Some(subtitle) => &subtitle,
                 None => ""
             };
-            let new_article_model = NewArticleModel {
-                id: &id,
-                title: &new_article.title,
-                subtitle: subtitle,
-                intro: &new_article.intro,
-                creater: username
+            let new_article_model = ArticleModel {
+                id: id,
+                title: Some(new_article.title),
+                subtitle: new_article.subtitle,
+                intro: Some(new_article.intro),
+                rcmd_weight: new_article.rcmd_weight,
+                url: new_article.url, 
+                creater: String::from(username),
+                create_at:   chrono::Utc::now().naive_local(),
+                update_at: chrono::Utc::now().naive_local(),
             };
              let new_article_content = NewArticleContentModel {
                 article_id: &new_article_model.id,
@@ -34,8 +41,18 @@ pub  fn add_article(conn:  &DbConnection, new_article: &NewArticle, username: &s
         })
 }
 
-pub fn edit_article_info(conn: &DbConnection,  edit_article: &ArticleModel)  -> Result<usize,  Error>  {
-    diesel::update(tb_article::table).set(edit_article).execute(conn)
+pub fn edit_article_info(conn: &DbConnection,   edit_article: &EditArticle)  -> Result<usize,  Error>  {
+    let edit_article_model = EditArticleModel {
+            id: edit_article.id.clone(),
+            title: edit_article.title.clone(),
+            subtitle: edit_article.subtitle.clone(),
+            intro: edit_article.intro.clone(),
+            rcmd_weight: edit_article.rcmd_weight.clone(),
+            url: edit_article.url.clone(),
+            update_at: chrono::Utc::now().naive_local(),
+    };
+
+    diesel::update(tb_article::table).set(edit_article_model).execute(conn)
 }
 
 /**
@@ -76,8 +93,9 @@ pub fn remove_article_content(conn: &DbConnection,  saved: i64,  article_id_find
 pub fn list_new_article(conn: &DbConnection, page_no: i64,  page_size: i64) -> ListAriticleResult {
     use self::tb_article::dsl::*;
     let (limit, offset) = db_util::page2limit_offset(page_no, page_size);
+    info!("limit:{}, offset:{}", &limit, &offset);
 
-    tb_article.order(id.desc()).limit(limit).offset(offset).load::<ArticleModel>(conn)
+    tb_article.order(update_at.desc()).limit(limit).offset(offset).load::<ArticleModel>(conn)
 }
 
 pub fn list_recommend_article(conn: &DbConnection, page_no: i64, page_size: i64) -> ListAriticleResult {

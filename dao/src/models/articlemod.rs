@@ -1,4 +1,9 @@
+
+use std::time::SystemTime;
+
+use diesel::sql_types::Datetime;
 use serde::{Deserialize, Serialize};
+
 use crate::schema::{tb_article, tb_article_content};
 
 #[derive(Serialize, Deserialize)]
@@ -14,6 +19,8 @@ pub struct ArticleModel {
     pub rcmd_weight: Option<i32>,
     pub url: Option<String>,
     pub creater: String,
+    pub create_at: chrono::NaiveDateTime,
+    pub update_at: chrono::NaiveDateTime,
 }
 
 #[derive(Insertable)]
@@ -45,19 +52,21 @@ pub struct EditArticle {
        pub rcmd_weight: Option<i32>,
        pub url: Option<String>,
        pub content:  Option<String>,
-       
 }
-/*
+
+
 #[derive(AsChangeset)]
 #[table_name="tb_article"]
 pub struct EditArticleModel {
        pub id: String,
        pub title: Option<String>,
        pub subtitle: Option<String>,
+       pub rcmd_weight: Option<i32>,
+       pub url: Option<String>,
        pub intro: Option<String>,
+       pub update_at: chrono::NaiveDateTime,
 }
 
-*/
 
 #[derive(AsChangeset)]
 #[derive(Queryable)]

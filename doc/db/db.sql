@@ -16,10 +16,12 @@ CREATE TABLE `tb_article` (
         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='文章' ;
 
-alter table tb_article add column rcmd_weight int(3) after intro COMMENT  '推荐权重';
+alter table tb_article add column rcmd_weight int(3)  default -1 COMMENT  '推荐权重' after intro  ;
+alter table tb_article add column url varchar(300)   COMMENT  '访问链接' after rcmd_weight  ;
+alter table tb_article add column create_at datetime NOT NULL COMMENT '创建时间' after creater;
+alter table tb_article add column update_at datetime NOT NULL COMMENT '更新时间' after create_at;
 
-
-
+--alter table tb_article modify column create_at datetime NOT NULL  COMMENT '创建时间' after creater;
 CREATE TABLE `tb_article_content` (
     `id` bigint(18) NOT NULL auto_increment COMMENT 'ID',
     `article_id` varchar(40) NOT NULL  COMMENT 'article ID',

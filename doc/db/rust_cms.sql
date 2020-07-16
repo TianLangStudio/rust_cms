@@ -51,7 +51,11 @@ CREATE TABLE `tb_article` (
   `title` varchar(200) DEFAULT '' COMMENT '文章标题',
   `subtitle` varchar(200) DEFAULT '' COMMENT '文章副标题',
   `intro` varchar(300) DEFAULT '' COMMENT '文章简介',
+  `rcmd_weight` int(3) DEFAULT '-1' COMMENT '推荐权重',
+  `url` varchar(300) DEFAULT NULL COMMENT '访问链接',
   `creater` varchar(50) NOT NULL COMMENT '创建人',
+  `create_at` datetime NOT NULL COMMENT '创建时间',
+  `update_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -62,7 +66,7 @@ CREATE TABLE `tb_article` (
 
 LOCK TABLES `tb_article` WRITE;
 /*!40000 ALTER TABLE `tb_article` DISABLE KEYS */;
-INSERT INTO `tb_article` VALUES ('7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','helloworld','','hello world editor','zhangsan');
+INSERT INTO `tb_article` VALUES ('7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','helloworld','','hello world editor',-1,'','zhangsan','2020-07-16 08:06:02','2020-07-16 08:54:03');
 /*!40000 ALTER TABLE `tb_article` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -78,7 +82,7 @@ CREATE TABLE `tb_article_content` (
   `article_id` varchar(40) NOT NULL COMMENT 'article ID',
   `content` longtext COMMENT '文件内容',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='文章内容';
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COMMENT='文章内容';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +91,7 @@ CREATE TABLE `tb_article_content` (
 
 LOCK TABLES `tb_article_content` WRITE;
 /*!40000 ALTER TABLE `tb_article_content` DISABLE KEYS */;
-INSERT INTO `tb_article_content` VALUES (2,'7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','<b>hello world&nbsp;</b>'),(3,'7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','\n                 <b>hello world editor</b>');
+INSERT INTO `tb_article_content` VALUES (11,'7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','\n                 \n                 \n                 \n                 \n                 \n                 \n                 \n                 <b>hello world editor</b>\n                \n                \n                \n                \n                \n                \n                '),(12,'7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','\n                 \n                 \n                 \n                 \n                 \n                 \n                 \n                 <b>hello world editor</b>\n                \n                \n                \n                \n                \n                \n                '),(13,'7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','\n                 \n                 \n                 \n                 \n                 \n                 \n                 \n                 <b>hello world editor</b>\n                \n                \n                \n                \n                \n                \n                ');
 /*!40000 ALTER TABLE `tb_article_content` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -153,4 +157,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-09 22:33:00
+-- Dump completed on 2020-07-16 18:40:26

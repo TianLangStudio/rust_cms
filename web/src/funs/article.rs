@@ -24,7 +24,7 @@ fn make_list_by_page<T>(pool: db_util::Pool,  list_by_page:   T) -> super::Globa
 where T:  Fn(&articlerepo::DbConnection, i64, i64) ->  articlerepo::ListAriticleResult  + Send  + Sync + 'static
  {
     Box::new(move |args| -> Result<Value> {
-        let default_page_no = to_value(0).unwrap();
+        let default_page_no = to_value(1).unwrap();
         let default_page_size = to_value(10).unwrap();
  
         let page_no   = args.get("page_no").unwrap_or( &default_page_no);

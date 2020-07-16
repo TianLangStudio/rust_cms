@@ -24,7 +24,7 @@ async fn admin_add_article(
             None => return result::forbidden_with_errmsg(String::from("请先登录"))
         };
         
-        match articlerepo::add_article(&pool.get().unwrap(),   &article, &username) {
+        match articlerepo::add_article(&pool.get().unwrap(),   article.0, &username) {
             Ok(_) =>  HttpResponse::Ok().json(result::AjaxResult::<bool>::success_without_data()),
             Err(err) => {
                 error!("add article error:{}", err);
@@ -41,17 +41,17 @@ async fn admin_edit_article( pool: web::Data<Pool>,
             None => return result::server_busy_error()
         };
         let username = web_util::get_username_from_session(&session).unwrap();
-
-        let edit_article_model = ArticleModel {
+        
+        /*let edit_article_model = EditArticleModel {
             id: edit_article.id.clone(),
             title: edit_article.title.clone(),
             subtitle: edit_article.subtitle.clone(),
             intro: edit_article.intro.clone(),
             rcmd_weight: edit_article.rcmd_weight.clone(),
             url: edit_article.url.clone(),
-            creater: username,
-        };
-        match articlerepo::edit_article_info(&conn,  &edit_article_model) {
+            update
+        };*/
+        match articlerepo::edit_article_info(&conn,  &edit_article) {
             Ok(_) =>  {
                if let Some(content) =  &edit_article.content  {
                     let new_article_content = NewArticleContentModel {
