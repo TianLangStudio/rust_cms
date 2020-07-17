@@ -14,7 +14,7 @@ pub fn get_username_from_session(session: &Session) -> Option<String>{
         Ok(uname) => uname?,
         _ =>  return None
     };
-    let user_key_sign = blake2_sign(&username);
+    let user_key_sign = blake2_sign_temp(&username);
     match session.get::<String>(SESSION_USER_KEY_SIGN) {
         Ok(Some(user_key_sign_session))  if user_key_sign == user_key_sign_session => {
                 Some(username)

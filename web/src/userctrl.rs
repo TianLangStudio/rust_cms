@@ -6,7 +6,7 @@ use actix_session::Session;
 use log::{info, warn};
 
 use common::result::AjaxResult;
-use common::sign_util::blake2_sign;
+use common::sign_util::blake2_sign_temp as blake2_sign;
 use super::web_util;
 
 use dao::{models::usermod::*, repos::userrepo};

@@ -11,7 +11,8 @@
 - [x]  session 
 - [x]  基于session的登录验证  
 - [x]  Tera模板/自定义函数等
-　
+- [ ]  支持Markdown 
+- [ ]  支持审核发布状态　
 ---  
 
 # 运行 
