@@ -41,12 +41,17 @@
                     <a target="_blank" href=" {{article_url}}">
                     <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                         <div class="portfolio-item-caption-content text-center text-white">
-                            点击查看
+                            点击查看     
                         </div>
                     </div>
                     <div class="article-title text-truncate">{{article.title}}</div>
                     <div class="article-subtitle text-truncate">{{article.subtitle}}</div>
-                    <div class="article-intro text-break">{{article.intro | truncate(length=50) }}</div>
+                    <div class="article-intro text-break">
+                        {{article.intro | truncate(length=50) }}
+                        {% if  article.creater == username %} 
+                                <a target="_blank" href="/article/admin/edit/{{article.id}}">编辑</a>
+                        {% endif %}
+                    </div>
                     </a>
                 </div>
             </div>

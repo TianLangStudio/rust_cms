@@ -1,7 +1,15 @@
 {% extends "freelancer/common/base.html" %}
 {% block head %}
 {{super()}}
-<link rel="stylesheet" href="/static/com/summernote/0.8.18/summernote-bs4.min.css" />
+  <!-- Editor's Dependecy Style -->
+  <link
+    rel="stylesheet"
+    href="/static/com/codemirror/5.48.4/codemirror.min.css"
+  />
+  <!-- Editor's Style -->
+  <link rel="stylesheet" href="/static/com/tuieditor/2.3.0/toastui-editor.min.css" />
+
+<!--link rel="stylesheet" href="/static/com/summernote/0.8.18/summernote-bs4.min.css" /-->
 <style>
     #tl-article-content-cnr {
       height: 450px;
@@ -29,9 +37,15 @@
           </div>
         </div>
         <div class="form-group row">
-            <div class="col-sm-10"></div>
+            <div class="col-sm-8"></div>
             <div class="col-sm-2">
-                <div class="btn btn-outline-info form-control" id="tl-publish-btn">
+              <div class="btn btn-outline-info form-control" id="tl-save-btn">
+                <span class="loading spinner-border spinner-border-sm" style="display: none;"  role="status" aria-hidden="true" ></span>
+                保存
+              </div>
+          </div>
+            <div class="col-sm-2">
+                <div class="btn btn-outline-danger form-control" id="tl-publish-btn">
                   <span class="loading spinner-border spinner-border-sm" style="display: none;"  role="status" aria-hidden="true" ></span>
                   发布
                 </div>
@@ -48,12 +62,19 @@
               <input type="text"  id="tl-article-url"    class="form-control" value="{{article.url | default(value= '') }}" placeholder="跳转url">
             </div>
           </div>
+          <div class="form-group row">
+              <label for="tl-article-intro-in" class="col-sm-3 col-form-label">简介</label>
+              <div class="col-sm-9">
+                    <textarea  rows="3" id="tl-article-intro-in" class="form-control"  placeholder="请输入文章简介，默认取文章前100词">{{article.intro | default(value='')}}</textarea>
+              </div>
+          </div>
       </form>
 </div>
 {% endblock content %}
 
 {% block footer %}
 {{super()}}
-<script src="/static/com/summernote/0.8.18/summernote-bs4.js"></script>
+<!--script src="/static/com/summernote/0.8.18/summernote-bs4.js"></script-->
+<script src="/static/com/tuieditor/2.3.0/toastui-editor-all.min.js"></script>
 <script src="/static/tmpl/freelancer/js/article.js"></script>
 {% endblock footer %}

@@ -1,8 +1,8 @@
 use lazy_static::lazy_static;
-use log4rs;  
-use log::{error, info, warn, debug, trace};
+use log::{debug, error, info, trace, warn};
+use log4rs;
 
-pub fn init()  {
+pub fn init() {
     log4rs::init_file("conf/log4rs.yaml", Default::default()).unwrap();
     let test_msg_pre = "log level";
     let test_msg_suf = "test message";

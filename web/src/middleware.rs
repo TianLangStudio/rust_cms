@@ -8,16 +8,15 @@ use futures::future::{ok, Ready};
 use futures::Future;
 
 use actix_service::{Service, Transform};
-use actix_web::{dev::ServiceRequest, dev::ServiceResponse, Error,  HttpResponse};
-use actix_session::{UserSession};
+use actix_session::UserSession;
+use actix_web::{dev::ServiceRequest, dev::ServiceResponse, Error, HttpResponse};
 
-use log::{info};
+use log::info;
 
 use super::web_util;
 
 #[derive(Clone)]
-pub struct AuthService {
-}
+pub struct AuthService {}
 
 impl<S, B> Transform<S> for AuthService
 where
@@ -38,8 +37,6 @@ where
         })
     }
 }
-
-
 
 pub struct AuthMiddleware<S> {
     service: Rc<RefCell<S>>,
@@ -65,11 +62,13 @@ where
         Box::pin(async move {
             let path = req.path().to_string();
             info!("path:{}", path);
-            if path.find("/admin") .is_some() &&  web_util::get_username_from_session(&req.get_session()).is_none() {
+            if path.find("/admin").is_some()
+                && web_util::get_username_from_session(&req.get_session()).is_none()
+            {
                 Ok(req.into_response(HttpResponse::Unauthorized().finish().into_body()))
             } else {
-                 let res_fut = srv.call(req);
-                 res_fut.await
+                let res_fut = srv.call(req);
+                res_fut.await
             }
         })
     }

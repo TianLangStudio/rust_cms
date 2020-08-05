@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use crate::schema::tb_login_info;
+use serde::{Deserialize, Serialize};
 
 #[derive(Queryable)]
 pub struct LoginInfoModel {
@@ -7,13 +7,13 @@ pub struct LoginInfoModel {
     pub username: String,
     pub password: String,
 }
- 
+
 #[derive(Insertable)]
-#[table_name="tb_login_info"]
-pub struct NewLoginInfo <'a>{
-       pub username:  &'a str,
-       pub password: &'a str,
-} 
+#[table_name = "tb_login_info"]
+pub struct NewLoginInfo<'a> {
+    pub username: &'a str,
+    pub password: &'a str,
+}
 
 #[derive(Deserialize, Serialize)]
 pub struct LoginInfo {

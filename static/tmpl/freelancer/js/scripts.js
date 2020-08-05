@@ -111,10 +111,10 @@
         data: JSON.stringify(data),
         dataType: "json",
         success:function (resp) {
-                successCb && successCb(resp.responseJSON || {});
+                successCb && successCb(resp || {});
         },
         error:function (resp) {
-                failCb && failCb(resp.responseJSON || {});
+                failCb && failCb(resp || {});
         }
     });
 }

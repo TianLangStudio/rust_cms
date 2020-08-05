@@ -28,10 +28,14 @@
             <h3 class="post-subtitle">
                  {{article.subtitle | default(value='')}}
             </h3>
+     
           </a>
           <p class="post-meta">
             <a href="#">{{article.creater}}</a>
              发布于{{article.create_at|date(format="%Y年%m月%d日%H:%M")}}
+             {% if  article.creater == username %} 
+                    <a target="_blank" href="/article/admin/edit/{{article.id}}">编辑</a>
+            {% endif %}
           </p>
         </div>
         <hr>
@@ -40,6 +44,7 @@
         <div class="clearfix">
           <a class="btn btn-primary float-right" href="/view/articles?page_no={{page_no + 1}}&page_size=7">查看更多 &rarr;</a>
         </div>
+        <hr>
       </div>
     </div>
   </div>

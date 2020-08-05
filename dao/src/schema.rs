@@ -6,6 +6,7 @@ table! {
         intro -> Nullable<Varchar>,
         rcmd_weight -> Nullable<Integer>,
         url -> Nullable<Varchar>,
+        status -> Nullable<Integer>,
         creater -> Varchar,
         create_at -> Datetime,
         update_at -> Datetime,
@@ -14,9 +15,11 @@ table! {
 
 table! {
     tb_article_content (id) {
-        id -> Bigint,
+        id -> Varchar,
+        status -> Nullable<Integer>,
         article_id -> Varchar,
         content -> Nullable<Longtext>,
+        create_at -> Nullable<Datetime>,
     }
 }
 
