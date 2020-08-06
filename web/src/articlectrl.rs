@@ -167,6 +167,14 @@ async fn view_article_by_id(
     let article_id = &path_params.0;
 
     let article_info = articlerepo::find_article_by_id(&conn, &article_id);
+    let article_info = match article_info {
+        Ok(article_info) => article_info,
+        _ => {
+            return Ok(result::internal_server_error(String::from(
+                "服务器繁忙请稍后再试",
+            )))
+        }
+    };
 
     let article_content = articlerepo::find_article_content_by_id(&conn, &article_id);
 
@@ -178,14 +186,7 @@ async fn view_article_by_id(
             )))
         }
     };
-    let article_info = match article_info {
-        Ok(article_info) => article_info,
-        _ => {
-            return Ok(result::internal_server_error(String::from(
-                "服务器繁忙请稍后再试",
-            )))
-        }
-    };
+  
 
     render_context.insert("article_info", &article_info);
     render_context.insert("article_content", &article_content);

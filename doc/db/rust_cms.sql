@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.7.30, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.31, for Linux (x86_64)
 --
 -- Host: 127.0.0.1    Database: rust_cms
 -- ------------------------------------------------------
@@ -53,6 +53,7 @@ CREATE TABLE `tb_article` (
   `intro` varchar(300) DEFAULT '' COMMENT '文章简介',
   `rcmd_weight` int(3) DEFAULT '-1' COMMENT '推荐权重',
   `url` varchar(300) DEFAULT NULL COMMENT '访问链接',
+  `status` int(2) DEFAULT '0' COMMENT '文章状态',
   `creater` varchar(50) NOT NULL COMMENT '创建人',
   `create_at` datetime NOT NULL COMMENT '创建时间',
   `update_at` datetime NOT NULL,
@@ -66,7 +67,7 @@ CREATE TABLE `tb_article` (
 
 LOCK TABLES `tb_article` WRITE;
 /*!40000 ALTER TABLE `tb_article` DISABLE KEYS */;
-INSERT INTO `tb_article` VALUES ('7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','helloworld','','hello world editor',-1,'','zhangsan','2020-07-16 08:06:02','2020-07-16 08:54:03');
+INSERT INTO `tb_article` VALUES ('208ef34c-95a5-496e-8a0c-2ced6ac75109','hello name','','hello intro',-1,'',0,'zhangsan','2020-08-05 12:53:00','2020-08-05 14:33:08'),('251572cc-1d8f-4fd8-bb9f-50d098d85c7d','hello name','','hello intro',-1,'',0,'zhangsan','2020-08-05 12:50:19','2020-08-05 14:33:08'),('2e5eac14-9942-4033-9bfd-a15079a8ca0c','hello name','','hello intro',-1,'',0,'zhangsan','2020-08-05 12:49:08','2020-08-05 14:33:08'),('87049086-77e7-4aff-a653-31d2f9b4e358','hello name','','hello intro',-1,'',8,'zhangsan','2020-08-05 12:55:00','2020-08-05 14:33:08'),('8a39bec8-6c25-4748-b59b-a74a900c0c66','hello name','','hello intro',-1,'',0,'zhangsan','2020-08-05 12:43:43','2020-08-05 14:33:08'),('8ee45e13-d785-4041-99f3-bcca8711b06f','hello name','','hello intro',-1,'',0,'zhangsan','2020-08-05 12:29:56','2020-08-05 14:33:08'),('a7b46e55-f518-4884-94ac-07e0c727c817','hello name','','hello intro',-1,'',0,'zhangsan','2020-08-05 12:31:48','2020-08-05 14:33:08'),('baad0a71-6e01-4d53-9838-b51a2ae42ef2','hello name','','hello intro',-1,'',0,'zhangsan','2020-08-05 12:51:43','2020-08-05 14:33:08'),('c41b4a67-8f5b-4e1e-ab58-287bff1b4df9','hello name','','hello intro',-1,'',0,'zhangsan','2020-08-05 11:47:36','2020-08-05 14:33:08'),('d31a176d-9ca4-43dd-b570-8d0d209be2b3','hello name','','hello intro',-1,'',0,'zhangsan','2020-08-05 12:42:54','2020-08-05 14:33:08'),('e2bbfa86-7b42-4499-820f-093f7a999ec5','hello name','','hello intro',-1,'',8,'zhangsan','2020-08-05 12:43:25','2020-08-05 14:33:08');
 /*!40000 ALTER TABLE `tb_article` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -78,11 +79,13 @@ DROP TABLE IF EXISTS `tb_article_content`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_article_content` (
-  `id` bigint(18) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` varchar(40) NOT NULL COMMENT 'ID',
+  `status` int(2) DEFAULT '0' COMMENT '内容状态',
   `article_id` varchar(40) NOT NULL COMMENT 'article ID',
   `content` longtext COMMENT '文件内容',
+  `create_at` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COMMENT='文章内容';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章内容';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,7 +94,7 @@ CREATE TABLE `tb_article_content` (
 
 LOCK TABLES `tb_article_content` WRITE;
 /*!40000 ALTER TABLE `tb_article_content` DISABLE KEYS */;
-INSERT INTO `tb_article_content` VALUES (11,'7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','\n                 \n                 \n                 \n                 \n                 \n                 \n                 \n                 <b>hello world editor</b>\n                \n                \n                \n                \n                \n                \n                '),(12,'7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','\n                 \n                 \n                 \n                 \n                 \n                 \n                 \n                 <b>hello world editor</b>\n                \n                \n                \n                \n                \n                \n                '),(13,'7bc3ba05-0e1d-4265-91af-f6fe5f65e61b','\n                 \n                 \n                 \n                 \n                 \n                 \n                 \n                 <b>hello world editor</b>\n                \n                \n                \n                \n                \n                \n                ');
+INSERT INTO `tb_article_content` VALUES ('208ef34c-95a5-496e-8a0c-2ced6ac75109',0,'208ef34c-95a5-496e-8a0c-2ced6ac75109','<p>hello content</p>\n',NULL),('251572cc-1d8f-4fd8-bb9f-50d098d85c7d',0,'251572cc-1d8f-4fd8-bb9f-50d098d85c7d','<p>hello content</p>\n',NULL),('2e5eac14-9942-4033-9bfd-a15079a8ca0c',0,'2e5eac14-9942-4033-9bfd-a15079a8ca0c','<p>hellocontent</p>\n',NULL),('5cb1e9a8-6479-46cd-b372-fe23f9778d7c',8,'e2bbfa86-7b42-4499-820f-093f7a999ec5','<p>hello world hello<br>\n<a href=\"http://www.baidu.com\">hello</a><br>\nhelloworld<br>\nhelloworld<br>\nhelloworld</p>\n','2020-08-05 14:33:08'),('819e20d8-2dd0-43a2-9f1a-0758e07c6c9a',0,'','<p>hello world hahaha</p>\n',NULL),('87049086-77e7-4aff-a653-31d2f9b4e358',0,'87049086-77e7-4aff-a653-31d2f9b4e358','<p>hello content</p>\n',NULL),('8a39bec8-6c25-4748-b59b-a74a900c0c66',0,'8a39bec8-6c25-4748-b59b-a74a900c0c66','<p>hellocontent</p>\n',NULL),('8c0daf35-bde4-4397-b860-34fa40bc0041',0,'','<p>hello world hahaha</p>\n',NULL),('8ee45e13-d785-4041-99f3-bcca8711b06f',0,'8ee45e13-d785-4041-99f3-bcca8711b06f','<p>hellocontent</p>\n',NULL),('a7b46e55-f518-4884-94ac-07e0c727c817',0,'a7b46e55-f518-4884-94ac-07e0c727c817','<p>hellocontent</p>\n',NULL),('b9cfb7fb-146b-41ad-8122-3aa6ec1d7b05',0,'','<p>hello world</p>\n',NULL),('baad0a71-6e01-4d53-9838-b51a2ae42ef2',0,'baad0a71-6e01-4d53-9838-b51a2ae42ef2','<p>hello content</p>\n',NULL),('c41b4a67-8f5b-4e1e-ab58-287bff1b4df9',0,'c41b4a67-8f5b-4e1e-ab58-287bff1b4df9','<p>hello world hahaha</p>\n',NULL),('c87e4a1a-e3b0-415b-8c9f-2405bd5bf9da',0,'e2bbfa86-7b42-4499-820f-093f7a999ec5','<p>hello content</p>\n',NULL),('d31a176d-9ca4-43dd-b570-8d0d209be2b3',0,'d31a176d-9ca4-43dd-b570-8d0d209be2b3','<p>hellocontent</p>\n',NULL),('d60f3dee-b7a5-4735-bb98-87bd6c6336fd',0,'e2bbfa86-7b42-4499-820f-093f7a999ec5','<p>hello world hello<br>\n<a href=\"http://www.baidu.com\">hello</a></p>\n',NULL),('dd483c16-3aac-432a-b5aa-3d59aa2b0a08',8,'87049086-77e7-4aff-a653-31d2f9b4e358','<p>hello content</p>\n',NULL);
 /*!40000 ALTER TABLE `tb_article_content` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -135,7 +138,7 @@ CREATE TABLE `tb_login_info` (
   `password` varchar(200) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,7 +147,7 @@ CREATE TABLE `tb_login_info` (
 
 LOCK TABLES `tb_login_info` WRITE;
 /*!40000 ALTER TABLE `tb_login_info` DISABLE KEYS */;
-INSERT INTO `tb_login_info` VALUES (1,'tianlang','77245687E9A2C7F020AFACBE53919CD017AEAAAE448B5F1B2C71F6C0A210CD050F5FB8EF615BC9AC4CA582EE34198B73F3888DBC8C258FB41C5CB44E4DC8B22D'),(3,'zhangsan','wYGYGePjkfBHQXNcUobmKPYnEGJKQsjRyT1t5mkxLr6Mk94MJSRuKWJ6kZjxO4XYhEzNPe2/0YCptgGA714bcw==');
+INSERT INTO `tb_login_info` VALUES (1,'tianlang','77245687E9A2C7F020AFACBE53919CD017AEAAAE448B5F1B2C71F6C0A210CD050F5FB8EF615BC9AC4CA582EE34198B73F3888DBC8C258FB41C5CB44E4DC8B22D'),(5,'zhangsan','2krSsSmmYAIT3o4hcOLkqv5+pJTpinkPOp9WYs9IC1butfpy4ZhWHuU7h/tOMu/QNiGGjlwJsORNtwddKeZ+vg==');
 /*!40000 ALTER TABLE `tb_login_info` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -157,4 +160,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-16 18:40:26
+-- Dump completed on 2020-08-06 17:10:56

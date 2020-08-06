@@ -71,7 +71,7 @@
          
          var articleRcmdWeight = -1;
          try {
-            articleRcmdWeight = parseInt(get_article_rcmd_weight);
+            articleRcmdWeight = parseInt(get_article_rcmd_weight());
          }catch (e) {
 
          }

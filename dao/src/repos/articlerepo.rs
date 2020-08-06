@@ -65,6 +65,7 @@ pub fn edit_article_info(conn: &DbConnection, edit_article: &EditArticle) -> Res
     };
 
     diesel::update(tb_article::table)
+        .filter(tb_article::dsl::id.eq(id))
         .set(edit_article_model)
         .execute(conn)
 }
@@ -83,22 +84,22 @@ fn publish_article_content(
     content_id: &str,
     conn: &DbConnection,
 ) -> Result<usize, Error> {
-    use self::tb_article_content::dsl::*;
-    diesel::update(tb_article_content)
-        .filter(article_id.eq(atl_id))
-        .set(status.eq(ARTICLE_STATUS_NEW))
+    use self::tb_article_content::dsl;
+    diesel::update(dsl::tb_article_content)
+        .filter(dsl::article_id.eq(atl_id))
+        .set(dsl::status.eq(ARTICLE_STATUS_NEW))
         .execute(conn);
-    diesel::update(tb_article_content)
-        .filter(id.eq(content_id))
-        .set(status.eq(ARTICLE_STATUS_PUBLISHED))
+    diesel::update(dsl::tb_article_content)
+        .filter(dsl::id.eq(content_id))
+        .set(dsl::status.eq(ARTICLE_STATUS_PUBLISHED))
         .execute(conn)
 }
 
 fn publish_article_info(article_id: &str, conn: &DbConnection) -> Result<usize, Error> {
-    use self::tb_article::dsl::*;
-    diesel::update(tb_article)
-        .filter(id.eq(article_id))
-        .set(status.eq(ARTICLE_STATUS_PUBLISHED))
+    use self::tb_article::dsl;
+    diesel::update(dsl::tb_article)
+        .filter(dsl::id.eq(article_id))
+        .set(dsl::status.eq(ARTICLE_STATUS_PUBLISHED))
         .execute(conn)
 }
 /**
@@ -123,10 +124,10 @@ pub fn remove_article_content(
     saved: i64,
     article_id_find: &str,
 ) -> Result<usize, Error> {
-    use self::tb_article_content::dsl::*;
-    let mut filter = tb_article_content
-        .filter(article_id.eq(article_id_find))
-        .order(create_at.desc())
+    use self::tb_article_content::dsl;
+    let mut filter = dsl::tb_article_content
+        .filter(dsl::article_id.eq(article_id_find))
+        .order(dsl::create_at.desc())
         .limit(10)
         .offset(saved)
         .load::<ArticleContentModel>(conn);
@@ -137,19 +138,19 @@ pub fn remove_article_content(
                 .iter()
                 .map(|article| article.id.clone())
                 .collect();
-            diesel::delete(tb_article_content.filter(id.eq_any(removed))).execute(conn)
+            diesel::delete(dsl::tb_article_content.filter(dsl::id.eq_any(removed))).execute(conn)
         }
         _ => Ok(0),
     }
 }
 pub fn list_new_article(conn: &DbConnection, page_no: i64, page_size: i64) -> ListAriticleResult {
-    use self::tb_article::dsl::*;
+    use self::tb_article::dsl;
     let (limit, offset) = db_util::page2limit_offset(page_no, page_size);
     info!("limit:{}, offset:{}", &limit, &offset);
 
-    tb_article
-        .filter(status.eq(ARTICLE_STATUS_PUBLISHED))
-        .order(update_at.desc())
+    dsl::tb_article
+        .filter(dsl::status.eq(ARTICLE_STATUS_PUBLISHED))
+        .order(dsl::update_at.desc())
         .limit(limit)
         .offset(offset)
         .load::<ArticleModel>(conn)
@@ -160,29 +161,29 @@ pub fn list_recommend_article(
     page_no: i64,
     page_size: i64,
 ) -> ListAriticleResult {
-    use self::tb_article::dsl::*;
+    use self::tb_article::dsl;
     let (limit, offset) = db_util::page2limit_offset(page_no, page_size);
-    tb_article
-        .filter(status.eq(ARTICLE_STATUS_PUBLISHED))
-        .order(rcmd_weight.desc())
+    dsl::tb_article
+        .filter(dsl::status.eq(ARTICLE_STATUS_PUBLISHED))
+        .order(dsl::rcmd_weight.desc())
         .limit(limit)
         .offset(offset)
         .load::<ArticleModel>(conn)
 }
 
 pub fn find_article_by_id(conn: &DbConnection, id: &str) -> Result<ArticleModel, Error> {
-    use self::tb_article::dsl::*;
-    tb_article.find(id).order(create_at.desc()).first(conn)
+    use self::tb_article::dsl;
+    dsl::tb_article.find(id).first(conn)
 }
 
 pub fn find_article_content_by_id(
     conn: &DbConnection,
     find_article_id: &str,
 ) -> Result<ArticleContentModel, Error> {
-    use self::tb_article_content::dsl::*;
-    tb_article_content
-        .filter(article_id.eq(find_article_id))
-        .filter(status.eq(ARTICLE_STATUS_PUBLISHED))
-        .order(create_at.desc())
+    use self::tb_article_content::dsl;
+    dsl::tb_article_content
+        .filter(dsl::article_id.eq(find_article_id))
+        .filter(dsl::status.eq(ARTICLE_STATUS_PUBLISHED))
+        .order(dsl::create_at.desc())
         .first(conn)
 }

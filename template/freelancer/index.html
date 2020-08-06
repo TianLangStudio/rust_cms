@@ -16,7 +16,7 @@
     </div>
 </header>
 <section class="page-section portfolio" id="portfolio">
-    <div class="container">
+    <div class="container-fluid">
         <!-- Portfolio Section Heading-->
         <div class="text-center">
             <h2 class="page-section-heading text-secondary mb-0 d-inline-block">博客</h2>
@@ -44,10 +44,10 @@
                             点击查看     
                         </div>
                     </div>
-                    <div class="article-title text-truncate">{{article.title}}</div>
+                    <div class="article-title">{{article.title}}</div>
                     <div class="article-subtitle text-truncate">{{article.subtitle}}</div>
                     <div class="article-intro text-break">
-                        {{article.intro | truncate(length=50) }}
+                        {{article.intro | truncate(length=88) }}
                         {% if  article.creater == username %} 
                                 <a target="_blank" href="/article/admin/edit/{{article.id}}">编辑</a>
                         {% endif %}
