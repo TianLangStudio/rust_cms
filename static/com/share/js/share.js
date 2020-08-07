@@ -13,7 +13,7 @@
 		//+ "<a target='_blank' class='msb_network_button weixin' title='微信'>weixin</a>"
 		+ "<a target='_blank' class='msb_network_button sina' title='新浪微博'>sina</a>"
 		+ "<a target='_blank' class='msb_network_button tQQ' title='QQ'>tQQ</a>"
-		+ "<a target='_blank' class='msb_network_button qZone' title='QQ空间'>qZone</a>"
+		//+ "<a target='_blank' class='msb_network_button qZone' title='QQ空间'>qZone</a>"
 		+ "<a target='_blank' class='msb_network_button douban' title='豆瓣'>douban</a>"
 		+ "</div>";
         $(target).append($msb_main);
@@ -89,26 +89,18 @@
                 })
             }
 		});
-
-
-
     }
-
 	function replaceAPI (api,options) {
-		api = api.replace('{url}', options.url);
-		api = api.replace('{title}', options.title);
-		api = api.replace('{content}', options.content);
-		api = api.replace('{pic}', options.pic);
-
+		api = api.replace(/{url}/g, options.url);
+		api = api.replace(/{title}/g, options.title);
+		api = api.replace(/{content}/g, options.content);
+		api = api.replace(/{pic}/g,  options.pic);
 		return api;
 	}
-
 	function tQQ(target,options){
 	    var options = $.extend({}, $.fn.socialShare.defaults, options);
-
 		window.open(replaceAPI(tqq,options));
 	}
-
 	function qZone(target,options){
 		var options = $.extend({}, $.fn.socialShare.defaults, options);
 
@@ -144,7 +136,7 @@
         url: window.location.href,
         title: document.title,
         content: '',
-        pic: ''
+        pic: 'https://www.tianlang.tech/static/img/farm_girl.png'
     }
 
 	//插件方法
@@ -186,9 +178,7 @@
 	//分享地址
 	var qzone ='https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&summary={content}';
 	var sina = 'https://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}';
-	var tqq = 'http://connect.qq.com/widget/shareqq/index.html?url={url}&title={title}&desc={content}&pics={pic}&summary="{content}"';
+	var tqq = 'http://connect.qq.com/widget/shareqq/index.html?url={url}&title={title}&desc=分享知识传播爱心&pics={pic}&summary={content}';
 	var douban = 'http://shuo.douban.com/!service/share?href={url}&name={title}&text={content}&image={pic}&starid=0&aid=0&style=11';
-	var weixin = 'http://sc.chinaz.com/';
-
-
+	var weixin = 'http://www.tianlang.tech';
 })(jQuery, window, document);

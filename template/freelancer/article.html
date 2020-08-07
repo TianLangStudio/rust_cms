@@ -1,7 +1,9 @@
 {% extends "freelancer/common/base.html" %}
 {% block head %}
-{{super()}}
-<link rel="stylesheet" href="/static/tmpl/freelancer/css/article.css" />
+  {{super()}}
+  <meta name="description" content="{{article_info.intro | truncate(length=88) }}">
+  <title>{{article_info.title}}@天朗工作室</title>
+   <link rel="stylesheet" href="/static/tmpl/freelancer/css/article.css" />
 {% endblock head %}
 
 {% block content%}

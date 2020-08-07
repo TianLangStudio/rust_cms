@@ -175,10 +175,7 @@ $('#logoutModal').on('click', '.logout-btn', function(e) {
 $(function() {
 
     $("#tl-share-btn").socialShare({
-      content: 'helloworld',
-      url:'helloworld',
-      titile:''
+      content: $(document.head).find('meta[name=description]').attr('content') || '一个不安分的程序员'
     });
-
 });
 //share end
