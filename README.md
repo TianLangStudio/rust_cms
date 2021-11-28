@@ -31,5 +31,16 @@
 在项目[rust_login](https://github.com/TianLangStudio/rust_login)的基础上增加CMS功能 
 **开发中** 进度可关注[博客](https://blog.csdn.net/tianlangstudio/article/details/106169242)  
 
+---
 
+# build error  
+1. throw an error when building third part lib
+   Maybe it is because of the version conflict,  you can remove the file named Cargo.lock then build again
 
+2. cannot find -lmysqlclient
+   > error: linking with `cc` failed: exit status: 1   
+   > ....   
+   > /usr/bin/ld: cannot find -lmysqlclient  
+
+   install mysqlclient then build again ex. install mysqlclient in Ubuntu  
+   >  sudo apt-get install libmysqlclient-dev
