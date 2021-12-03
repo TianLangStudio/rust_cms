@@ -1,3 +1,4 @@
+![Rust CMS](./doc/imgs/screenshot.png)  
 # 功能
 - [x]  登录登出
 - [x]  文件上传　　

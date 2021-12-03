@@ -1,11 +1,10 @@
 use actix_files as fs;
 use actix_session::CookieSession;
 use actix_web::{App, HttpServer};
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
+
 use log::*;
-use rustls::internal::pemfile::{certs, rsa_private_keys};
-use rustls::{NoClientAuth, ServerConfig};
-use std::fs::File;
-use std::io::BufReader;
+
 use tera::Tera;
 
 use common::{config_util, db_util, log_util};
@@ -17,7 +16,7 @@ mod middleware;
 mod userctrl;
 mod web_util;
 
-#[actix_rt::main]
+#[actix_web::main]
 async fn main() -> std::io::Result<()> {
     log_util::init();
     info!("app starting");
@@ -69,13 +68,12 @@ async fn main() -> std::io::Result<()> {
     });
 
     if is_prod {
-        let mut config = ServerConfig::new(NoClientAuth::new());
-        let cert_file = &mut BufReader::new(File::open("./conf/cert.pem").unwrap());
-        let key_file = &mut BufReader::new(File::open("./conf/key.pem").unwrap());
-        let cert_chain = certs(cert_file).unwrap();
-        let mut keys = rsa_private_keys(key_file).unwrap();
-        config.set_single_cert(cert_chain, keys.remove(0)).unwrap();
-        server.bind_rustls("127.0.0.1:8443", config)?.run().await
+        let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+        builder
+            .set_private_key_file("./conf/key.pem", SslFiletype::PEM)
+            .unwrap();
+        builder.set_certificate_chain_file("./conf/cert.pem").unwrap();
+        server.bind_openssl("127.0.0.1:8443", builder)?.run().await
     } else {
         let port = config_util::APP_CONFIG
             .get_str("tl.app.http.port")

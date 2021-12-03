@@ -7,9 +7,8 @@ use std::task::{Context, Poll};
 use futures::future::{ok, Ready};
 use futures::Future;
 
-use actix_service::{Service, Transform};
 use actix_session::UserSession;
-use actix_web::{dev::ServiceRequest, dev::ServiceResponse, Error, HttpResponse};
+use actix_web::{dev::ServiceRequest, dev::ServiceResponse,dev::Service, dev::Transform, Error, HttpResponse};
 
 use log::info;
 

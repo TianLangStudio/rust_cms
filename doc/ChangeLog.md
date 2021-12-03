@@ -1,3 +1,7 @@
+## 2021-12-01  
+- [x] upgrade rust edition to 2021 
+- [x] upgrade actix-web version to 3 and so on  
+
 ## 2020-08-07 
 -[x] 修复分享按钮不能正常获取到页面描述信息问题
 ## 2020-08-06

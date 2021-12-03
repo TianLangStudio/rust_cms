@@ -1,9 +1,9 @@
 use std::path::Path;
 
 use actix_files as fs;
-use actix_multipart::{Field, Multipart, MultipartError};
+use actix_multipart::{Field, Multipart};
 use actix_session::Session;
-use actix_web::{error, get, post, web, Either, Error, HttpResponse, Responder, Result};
+use actix_web::{get, post, web, Either, Error, HttpResponse, Result};
 use async_std::fs::File;
 use diesel::r2d2::{self, ConnectionManager};
 
@@ -47,6 +47,7 @@ async fn upload(mut multipart: Multipart, session: Session, pool: web::Data<Pool
 
 #[get("/api/file/{id}")]
 async fn view_file(path_params: web::Path<(String,)>) -> Result<fs::NamedFile> {
+    let path_params = path_params.into_inner();
     let file_id = &path_params.0;
     let path = Path::new(&*FILE_SAVE_PATH);
     //todo 判断是否是私有文件
@@ -62,7 +63,7 @@ fn get_file_save_path() -> String {
     };
     match std::fs::create_dir_all(&path) {
         Ok(_) => info!(" app upload path:{}", &path),
-        Err(e) => error!("error create app uplod path: {}", &path),
+        Err(_) => error!("error create app uplod path: {}", &path),
     }
     path
 }

@@ -1,11 +1,10 @@
 use actix_session::Session;
 use actix_web::{error, get, post, web, Error, HttpResponse, Responder};
-use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use serde::{Deserialize, Serialize};
 use tera::{self, Tera};
 
-use log::{error, info, warn};
+use log::{error, info};
 
 use common::{db_util, result};
 
@@ -100,7 +99,7 @@ async fn list_article(
         Some(conn) => conn,
         None => return Ok(result::server_busy_error()),
     };
-
+    let page = page.into_inner();
     match articlerepo::list_new_article(&conn, page.0, page.1) {
         Ok(articles) => Ok(HttpResponse::Ok().json(result::AjaxResult::success(Some(articles)))),
         Err(err) => Err(error::ErrorInternalServerError(err)),
@@ -164,6 +163,8 @@ async fn view_article_by_id(
         }
     };
 
+    let path_params = path_params.into_inner();
+
     let article_id = &path_params.0;
 
     let article_info = articlerepo::find_article_by_id(&conn, &article_id);
@@ -204,6 +205,7 @@ async fn admin_edit_view(
     pool: web::Data<Pool>,
     tmpl: web::Data<Tera>,
 ) -> impl Responder {
+    let path_params = path_params.into_inner();
     let tmpl_name = web_util::get_tmpl_from_session(&session) + "/admin/article/edit.html";
     let mut ctx = tera::Context::new();
     let article_id = &path_params.0;
