@@ -2,61 +2,26 @@
 use std::cell::RefCell;
 use std::pin::Pin;
 use std::rc::Rc;
-use std::task::{Context, Poll};
 
 use futures::future::{ok, Ready};
 use futures::Future;
-
-use actix_session::UserSession;
-use actix_web::{dev::ServiceRequest, dev::ServiceResponse,dev::Service, dev::Transform, Error, HttpResponse};
+use actix_web::{dev::Service, dev::Transform, Error, HttpResponse};
 
 use log::info;
 
 use super::web_util;
-
-#[derive(Clone)]
-pub struct AuthService {}
-
-impl<S, B> Transform<S> for AuthService
-where
-    S: Service<Request = ServiceRequest, Response = ServiceResponse<B>, Error = Error> + 'static,
-    S::Future: 'static,
-    B: 'static,
-{
-    type Request = ServiceRequest;
-    type Response = ServiceResponse<B>;
-    type Error = Error;
-    type InitError = ();
-    type Transform = AuthMiddleware<S>;
-    type Future = Ready<Result<Self::Transform, Self::InitError>>;
-
-    fn new_transform(&self, service: S) -> Self::Future {
-        ok(AuthMiddleware {
-            service: Rc::new(RefCell::new(service)),
-        })
-    }
-}
-
 pub struct AuthMiddleware<S> {
     service: Rc<RefCell<S>>,
 }
 
-impl<S, B> Service for AuthMiddleware<S>
-where
-    S: Service<Request = ServiceRequest, Response = ServiceResponse<B>, Error = Error> + 'static,
-    S::Future: 'static,
-    B: 'static,
-{
-    type Request = ServiceRequest;
-    type Response = ServiceResponse<B>;
+impl<S: Service<Req>, Req> Service<Req> for AuthMiddleware<S>{
+    type Response = S::Response;
     type Error = Error;
     type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>>>>;
 
-    fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        self.service.poll_ready(cx)
-    }
+    actix_service::forward_ready!(service);
 
-    fn call(&mut self, req: ServiceRequest) -> Self::Future {
+    fn call(&self, req: Req) -> Self::Future {
         let mut srv = self.service.clone();
         Box::pin(async move {
             let path = req.path().to_string();
@@ -72,3 +37,23 @@ where
         })
     }
 }
+
+#[derive(Clone)]
+pub struct AuthService {}
+
+impl<S: Service<Req>, Req> Transform<S, Req> for AuthService
+{
+    
+    type Response = S::Response;
+    type Error = Error;
+    type InitError = ();
+    type Transform = AuthMiddleware<S>;
+    type Future = Ready<Result<Self::Transform, Self::InitError>>;
+    fn new_transform(&self, service: S) -> Self::Future {
+        ok(AuthMiddleware {
+            service: Rc::new(RefCell::new(service)),
+        })
+    }
+}
+
+

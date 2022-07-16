@@ -46,7 +46,7 @@ pub fn render_html(
 }
 pub fn get_tmpl_from_session(_session: &Session) -> String {
     config_util::APP_CONFIG
-        .get_str("tl.app.template.name")
+        .get_string("tl.app.template.name")
         .expect("default template name is required")
 }
 

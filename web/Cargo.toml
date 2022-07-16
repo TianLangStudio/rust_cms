@@ -8,12 +8,16 @@ edition = "2018"
 
 [dependencies]
 log = "0.4"
-actix-web={version = "3", features=["openssl"]}
+http="0.2"
+actix-web={version = "4", features=["openssl"]}
 #actix-rt="1"
-actix-session="0.4"
-actix-files = "0.5"
+actix-session={version="0.6", features = ["cookie-session"]}
+actix-files = "0.6"
 actix-utils = "3.0"
-actix-multipart = "0.3"
+actix-service="2"
+actix-multipart = "0.4"
+actix-http = "3"
+actix-identity = "0.4"
 async-std = "1"
 openssl = { version = "0.10", features = ["v110"] }
 lazy_static = "1.4"

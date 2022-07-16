@@ -1,5 +1,6 @@
 use actix_files as fs;
-use actix_session::CookieSession;
+use actix_session::{SessionMiddleware, storage::CookieSessionStore};
+use actix_web::cookie::Key;
 use actix_web::{App, HttpServer};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 
@@ -16,13 +17,13 @@ mod middleware;
 mod userctrl;
 mod web_util;
 
-#[actix_web::main]
+#[actix_web::main] 
 async fn main() -> std::io::Result<()> {
     log_util::init();
     info!("app starting");
-
     //let app_config = config_util::APP_CONFIG;
     let is_prod = config_util::is_prod();
+    let secret_key = Key::generate();
     let server = HttpServer::new(move || {
         let mut tera = match Tera::new("template/**/*.html") {
             Ok(t) => t,
@@ -46,10 +47,7 @@ async fn main() -> std::io::Result<()> {
             .data(tera)
             .data(db_util::POOL.clone()) //绑定数据库链接池
             .wrap(middleware::AuthService {}) //添加根据Session验证登录状态的中间件
-            .wrap(
-                CookieSession::signed(&[0; 32]) // <- 添加使用cookie实现的session中间件
-                    .secure(is_prod),
-            )
+            .wrap(SessionMiddleware::new(CookieSessionStore::default(), secret_key.clone()))
             .service(filectrl::upload) //文件上传api
             .service(filectrl::view_file) //使用ID查看文件
             .service(userctrl::login) //用户登录接口
@@ -76,10 +74,10 @@ async fn main() -> std::io::Result<()> {
         server.bind_openssl("127.0.0.1:8443", builder)?.run().await
     } else {
         let port = config_util::APP_CONFIG
-            .get_str("tl.app.http.port")
+            .get_string("tl.app.http.port")
             .expect("port is required");
         let host = config_util::APP_CONFIG
-            .get_str("tl.app.http.host")
+            .get_string("tl.app.http.host")
             .expect("host is required");
         let host_port = host + ":" + &port;
         server.bind(&host_port)?.run().await

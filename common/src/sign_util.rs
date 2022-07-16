@@ -1,10 +1,10 @@
 use super::config_util;
-use blake2::{Blake2b, Digest};
+use blake2::{Blake2b, Blake2s256, Digest, digest::Update};
 use data_encoding::BASE64;
 
 fn get_salt() -> String {
     config_util::APP_CONFIG
-        .get_str("tl.app.sign.salt")
+        .get_string("tl.app.sign.salt")
         .expect("tl.app.sign.salt is required")
 }
 
@@ -15,6 +15,6 @@ pub fn blake2_sign_temp(text: &str) -> String {
 
 //使用指定盐值加密
 pub fn blake2_sign_with_salt(text: &str, salt: &str) -> String {
-    let sign = Blake2b::new().chain(salt).chain(text).finalize();
+    let sign = Blake2s256::new().chain(salt).chain(text).finalize();
     BASE64.encode(&sign)
 }

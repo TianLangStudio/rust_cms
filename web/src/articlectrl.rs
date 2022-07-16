@@ -1,5 +1,5 @@
 use actix_session::Session;
-use actix_web::{error, get, post, web, Error, HttpResponse, Responder};
+use actix_web::{error, get, post, web, Error, Responder, HttpResponse};
 use diesel::r2d2::{self, ConnectionManager};
 use serde::{Deserialize, Serialize};
 use tera::{self, Tera};
