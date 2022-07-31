@@ -96,11 +96,9 @@ async fn save_file(
     let mut file = File::create(file_path).await?;
     let mut length = 0;
     let content_disposition = field.content_disposition();
-    let mut upload_file_name = String::from("");
-    let mut upload_file_ext = String::from("");
-
-    upload_file_name = content_disposition.get_filename().unwrap_or("").to_string();
-    upload_file_ext = upload_file_name.split(".").last().unwrap_or("").to_string();
+    
+    let upload_file_name = content_disposition.get_filename().unwrap_or("").to_string();
+    let upload_file_ext = upload_file_name.split(".").last().unwrap_or("").to_string();
     
     while let Some(bytes) = field.next().await {
         let bytes = bytes?;

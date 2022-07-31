@@ -1,8 +1,8 @@
 [package]
 name = "web"
 version = "0.1.0"
-authors = ["Tianlang <tianlangstuido@aliyun.com>"]
-edition = "2018"
+authors = ["Tianlang <tianlangstudio@aliyun.com>"]
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -23,6 +23,7 @@ openssl = { version = "0.10", features = ["v110"] }
 lazy_static = "1.4"
 tera = "1"
 futures = "0.3"
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
 serde="1"
 diesel = {version ="1", features=["mysql","r2d2"]}
 common = {path="../common"}
