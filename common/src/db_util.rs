@@ -15,7 +15,7 @@ lazy_static! {
     pub static ref POOL: Pool = {
         info!("db pool init");
         let connspec = config_util::APP_CONFIG
-            .get_str("tl.app.db.url")
+            .get_string("tl.app.db.url")
             .expect("db url is required");
         let manager = ConnectionManager::<DbConnection>::new(connspec);
         r2d2::Pool::builder()

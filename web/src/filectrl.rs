@@ -3,7 +3,9 @@ use std::path::Path;
 use actix_files as fs;
 use actix_multipart::{Field, Multipart};
 use actix_session::Session;
-use actix_web::{get, post, web, Either, Error, HttpResponse, Result};
+use actix_web::{get, post, web, Either, Error, HttpResponse, Result, error};
+//use actix_http::{body::BoxBody, Response};
+//use http::StatusCode;
 use async_std::fs::File;
 use diesel::r2d2::{self, ConnectionManager};
 
@@ -26,7 +28,7 @@ type UploadReslut = Either<HttpResponse, Result<HttpResponse, Error>>;
 async fn upload(mut multipart: Multipart, session: Session, pool: web::Data<Pool>) -> UploadReslut {
     let username = match web_util::get_username_from_session(&session) {
         Some(usernaem) => usernaem,
-        None => return Either::A(result::forbidden_with_errmsg(String::from("请先登录"))),
+        None => return Either::Left(result::forbidden_with_errmsg(String::from("请先登录"))),
     };
 
     let mut file_ids: Vec<String> = Vec::new();
@@ -34,15 +36,15 @@ async fn upload(mut multipart: Multipart, session: Session, pool: web::Data<Pool
         let path = &*FILE_SAVE_PATH;
         match save_file(field, path, &username, &pool).await {
             Ok(file_id) => file_ids.push(file_id),
-            Err(err) => return Either::B(Err(err)),
+            Err(err) => return Either::Right(Err(err)),
         }
     }
     if file_ids.len() == 0 {
-        return Either::A(result::forbidden_with_errmsg(String::from(
+        return Either::Left(result::forbidden_with_errmsg(String::from(
             "请选择上传文件",
         )));
     }
-    Either::A(success_with_file_ids(file_ids))
+    Either::Left(success_with_file_ids(file_ids))
 }
 
 #[get("/api/file/{id}")]
@@ -57,7 +59,7 @@ fn success_with_file_ids(file_ids: Vec<String>) -> HttpResponse {
     HttpResponse::Ok().json(result::AjaxResult::success(Some(file_ids)))
 }
 fn get_file_save_path() -> String {
-    let path = match config_util::APP_CONFIG.get_str("tl.app.upload.path") {
+    let path = match config_util::APP_CONFIG.get_string("tl.app.upload.path") {
         Ok(path) => path,
         Err(_) => String::from("upload"),
     };
@@ -94,21 +96,17 @@ async fn save_file(
     let mut file = File::create(file_path).await?;
     let mut length = 0;
     let content_disposition = field.content_disposition();
-    let mut upload_file_name = String::from("");
-    let mut upload_file_ext = String::from("");
-
-    if let Some(cd) = content_disposition {
-        upload_file_name = cd.get_filename().unwrap_or("").to_string();
-        upload_file_ext = upload_file_name.split(".").last().unwrap_or("").to_string();
-    }
-
+    
+    let upload_file_name = content_disposition.get_filename().unwrap_or("").to_string();
+    let upload_file_ext = upload_file_name.split(".").last().unwrap_or("").to_string();
+    
     while let Some(bytes) = field.next().await {
         let bytes = bytes?;
         length += bytes.len();
         if length > *FILE_MAX_SIZE {
-            return Err(Error::from(
-                HttpResponse::PayloadTooLarge().body("上传的文件过大"),
-            ));
+            error!("err:{}", "上传的文件过大");
+            return Err(error::ErrorInternalServerError("上传的文件过大"));
+            //return Err(Error::from(Response::new(StatusCode::INTERNAL_SERVER_ERROR).set_body(BoxBody::new("上传的文件过大"))));
         }
         file.write_all(&bytes).await?;
     }
@@ -124,15 +122,11 @@ async fn save_file(
             Ok(_) => (),
             Err(err) => {
                 error!("err:{}", err);
-                return Err(Error::from(result::internal_server_error(String::from(
-                    "文件存储失败",
-                ))));
+                return Err(error::ErrorInternalServerError("文件存储失败"));
             }
         },
         None => {
-            return Err(Error::from(result::internal_server_error(String::from(
-                "文件存储失败",
-            ))))
+            return Err(error::ErrorInternalServerError("文件存储失败"));
         }
     };
 

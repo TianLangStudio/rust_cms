@@ -67,10 +67,10 @@ async fn login(
                 true => {
                     let user_key_sign = blake2_sign(&login_info.username);
                     session
-                        .set::<String>(SESSION_USER_KEY_SIGN, user_key_sign)
+                        .insert(SESSION_USER_KEY_SIGN, user_key_sign)
                         .unwrap();
                     session
-                        .set::<String>(SESSION_USER_KEY, login_info.username.clone())
+                        .insert(SESSION_USER_KEY, login_info.username.clone())
                         .unwrap();
                     HttpResponse::Ok().json(AjaxResult::<bool>::success_without_data())
                 }
