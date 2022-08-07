@@ -6,7 +6,7 @@ lazy_static! {
         let config_default = Config::builder()
                 .add_source(config::File::with_name("conf/application"))
                 .build()
-                .expect("请提供配置文件confg/application.yaml");
+                .expect("请提高配置文件confg/application.yaml");
         let mut config_builder = Config::builder().add_source(config_default.clone());
         config_builder = match config_default.get_string("tl.app.mode") {
             Ok(value) => {
