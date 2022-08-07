@@ -15,17 +15,9 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- create database
-CREATE DATABASE IF NOT EXISTS rust_cms DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
-
--- create user
-create user rust_cms identified by '123456';
-grant all privileges on rust_cms.* to 'rust_cms'@'%' identified by '123456' with grant option;
-flush privileges;
-
+--
 -- Table structure for table `__diesel_schema_migrations`
 --
-use rust_cms;
 
 DROP TABLE IF EXISTS `__diesel_schema_migrations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
