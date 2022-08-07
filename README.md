@@ -1,4 +1,8 @@
 ![Rust CMS](./doc/imgs/screenshot.png)  
+
+⚠这是个学习用项目，不要直接用于生产
+It is a project for learning. Don't use it in production!!!. 
+
 # 功能
 - [x]  登录登出
 - [x]  文件上传　　
@@ -19,8 +23,10 @@
 ---  
 
 # 运行 
-**请先安装Rust**  
-
+如果已经安装了[Rust](https://www.rust-lang.org/tools/install)和[Docker](https://docs.docker.com/engine/install/) 可以直接执行脚本运行
+> ./bin/start.sh  
+脚本中会使用Docker初始化数据库并运行rust_cms,启动成功后就可以使用浏览器访问http://127.0.0.1:8088了
+你也可以自己初始化数据库,无论如何 **请先安装[Rust](https://www.rust-lang.org/tools/install)**  
 > git clone git@github.com:TianLangStudio/rust_cms.git     
 > cd rust_cms 
 - 创建Mysql数据库　导入doc/rust_cms.sql  
