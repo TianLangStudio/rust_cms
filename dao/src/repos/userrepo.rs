@@ -56,7 +56,7 @@ pub fn remove_login_info(conn: &DbConnection, login_info_id: i64) -> Result<usiz
 
 pub fn valid_login_info(conn: &DbConnection, uname: &str, passwd: &str) -> bool {
     let signed_passwd = signed_password(passwd, uname);
-    //info!("password:{}, signed_passwd:{}, username: {}", passwd, &signed_passwd, uname);
+    info!("signed_passwd:{}, username: {}", &signed_passwd, uname);
     use self::tb_login_info::dsl::*;
     use crate::models::usermod::LoginInfoModel;
     match tb_login_info
