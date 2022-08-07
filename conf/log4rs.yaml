@@ -9,7 +9,7 @@ appenders:
       #pattern: "{d} - {m}{n}"
       pattern: "[{d(%Y-%m-%d %H:%M:%S)}] [{l}] [thread:{I}] [{M}] [{f}] [{t}]:{m}{n}"
 root:
-  level: info
+  level: debug
   appenders:
     - stdout
     - requests

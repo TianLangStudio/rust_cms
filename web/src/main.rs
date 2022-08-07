@@ -1,7 +1,7 @@
 use actix_files as fs;
 use actix_session::{SessionMiddleware, storage::CookieSessionStore};
 use actix_web::cookie::Key;
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use log::*;
 
@@ -43,8 +43,8 @@ async fn main() -> std::io::Result<()> {
         //  tera.full_reload();
 
         App::new()
-            .app_data(tera)
-            .app_data(db_util::POOL.clone()) //绑定数据库链接池
+            .app_data(web::Data::new(tera))
+            .app_data(web::Data::new(db_util::POOL.clone())) //绑定数据库链接池
             .wrap(middleware::AuthService) //添加根据Session验证登录状态的中间件
             .wrap(SessionMiddleware::new(CookieSessionStore::default(), secret_key.clone()))
             .service(filectrl::upload) //文件上传api
