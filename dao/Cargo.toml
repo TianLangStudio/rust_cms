@@ -12,5 +12,5 @@ log = "0.4"
 serde = { version = "1", features = ["derive"] }
 common = {path = "../common"}
 
-diesel = {version ="1", features=["mysql","r2d2", "chrono"]}
+diesel = {version ="2", features=["mysql","r2d2", "chrono"]}
 chrono = { version = "*", features = ["serde"] }

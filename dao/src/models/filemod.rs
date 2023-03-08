@@ -1,7 +1,7 @@
 use crate::schema::tb_file;
 
 #[derive(Insertable)]
-#[table_name = "tb_file"]
+#[diesel(table_name = tb_file)]
 pub struct NewFileMod<'a> {
     pub id: &'a str,
     pub name: Option<&'a str>,

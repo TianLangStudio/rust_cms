@@ -23,12 +23,14 @@ lazy_static! {
             .expect("Failed to create pool.")
     };
 }
+
 pub fn get_conn(pool: &Pool) -> Option<PooledConnection> {
     match pool.get_timeout(Duration::new(10, 0)) {
         Ok(conn) => Some(conn),
         Err(err) => None,
     }
 }
+
 pub fn uuid() -> String {
     uuid::Uuid::new_v4().to_string()
 }

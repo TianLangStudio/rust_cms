@@ -13,7 +13,7 @@ log4rs="1"
 blake2 = "0.10" # https://github.com/RustCrypto/hashes
 data-encoding = "2"
 lazy_static = "1.4"
-diesel = {version ="1", features=["mysql","r2d2"]}
+diesel = {version ="2", features=["mysql","r2d2"]}
 uuid = { version = "1", features = ["serde", "v4"] }
 serde = { version = "1", features = ["derive"] }
 actix-web={version = "4.1"}

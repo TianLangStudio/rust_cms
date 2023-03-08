@@ -25,13 +25,13 @@ async fn admin_save_article(
     session: Session,
     edit_article: web::Json<EditArticle>,
 ) -> impl Responder {
-    let conn = match db_util::get_conn(&pool) {
+    let mut conn = match db_util::get_conn(&pool) {
         Some(conn) => conn,
         None => return result::server_busy_error(),
     };
     let username = web_util::get_username_from_session(&session).unwrap();
     if edit_article.id.as_ref().is_none() || edit_article.id.as_ref().unwrap().len() < 2 {
-        match articlerepo::add_article(&pool.get().unwrap(), edit_article.0, &username) {
+        match articlerepo::add_article(&mut pool.get().unwrap(), edit_article.0, &username) {
             Ok(article_id) => {
                 let ids = PublishParams {
                     article_id: article_id.clone(),
@@ -48,7 +48,7 @@ async fn admin_save_article(
         }
     } else {
         let   article_id = edit_article.id.as_ref().unwrap();
-        match articlerepo::edit_article_info(&conn, &edit_article) {
+        match articlerepo::edit_article_info(&mut conn, &edit_article) {
             Ok(_) => {
                 if let Some(content) = &edit_article.content {
                     let content_id = db_util::uuid();
@@ -57,11 +57,11 @@ async fn admin_save_article(
                         &edit_article.id.as_ref().unwrap(),
                         &content
                     );
-                    match articlerepo::save_article_content(&conn, &new_article_content) {
+                    match articlerepo::save_article_content(&mut conn, &new_article_content) {
                         Ok(_) => {
 
                             let _ = articlerepo::remove_article_content(
-                                &conn,
+                                &mut conn,
                                 3,
                                 &edit_article.id.as_ref().unwrap(),
                             );
@@ -95,12 +95,12 @@ async fn list_article(
     pool: web::Data<Pool>,
     page: web::Path<(i64, i64)>,
 ) -> Result<HttpResponse, Error> {
-    let conn = match db_util::get_conn(&pool) {
+    let mut conn = match db_util::get_conn(&pool) {
         Some(conn) => conn,
         None => return Ok(result::server_busy_error()),
     };
     let page = page.into_inner();
-    match articlerepo::list_new_article(&conn, page.0, page.1) {
+    match articlerepo::list_new_article(&mut conn, page.0, page.1) {
         Ok(articles) => Ok(HttpResponse::Ok().json(result::AjaxResult::success(Some(articles)))),
         Err(err) => Err(error::ErrorInternalServerError(err)),
     }
@@ -113,8 +113,8 @@ async fn admin_publish_article(
 ) -> Result<HttpResponse, Error> {
     let article_id = &params.article_id;
     let content_id = &params.content_id;
-    let conn = db_util::get_conn(&pool).unwrap();
-    match articlerepo::publish_article(&article_id, content_id, &conn) {
+    let mut conn = web_util::get_conn_or_busy_error(&pool)?;
+    match articlerepo::publish_article(&article_id, content_id, &mut conn) {
         Ok(_) => Ok(result::ok_without_data()),
         Err(err) => Err(error::ErrorInternalServerError(err)),
     }
@@ -154,30 +154,21 @@ async fn view_article_by_id(
     tmpl: web::Data<Tera>,
 ) -> Result<HttpResponse, Error> {
     let mut render_context = tera::Context::new();
-    let conn = match db_util::get_conn(&pool) {
-        Some(conn) => conn,
-        _ => {
-            return Ok(result::internal_server_error(String::from(
-                "服务器繁忙请稍后再试",
-            )))
-        }
-    };
+    let mut conn = web_util::get_conn_or_busy_error(&pool)?;
 
     let path_params = path_params.into_inner();
 
     let article_id = &path_params.0;
 
-    let article_info = articlerepo::find_article_by_id(&conn, &article_id);
+    let article_info = articlerepo::find_article_by_id(&mut conn, &article_id);
     let article_info = match article_info {
         Ok(article_info) => article_info,
         _ => {
-            return Ok(result::internal_server_error(String::from(
-                "服务器繁忙请稍后再试",
-            )))
+            return Ok(result::server_busy_error())
         }
     };
 
-    let article_content = articlerepo::find_article_content_by_id(&conn, &article_id);
+    let article_content = articlerepo::find_article_content_by_id(&mut conn, &article_id);
 
     let article_content = match article_content {
         Ok(article_content) => article_content,
@@ -204,7 +195,7 @@ async fn admin_edit_view(
     session: Session,
     pool: web::Data<Pool>,
     tmpl: web::Data<Tera>,
-) -> impl Responder {
+) -> Result<impl Responder, Error>{
     let path_params = path_params.into_inner();
     let tmpl_name = web_util::get_tmpl_from_session(&session) + "/admin/article/edit.html";
     let mut ctx = tera::Context::new();
@@ -216,29 +207,25 @@ async fn admin_edit_view(
         //修改
         //检查当前用户是否是文章的所属者
         let username = web_util::get_username_from_session(&session).unwrap();
-        match db_util::get_conn(&pool) {
-            Some(conn) => {
-                match articlerepo::find_article_by_id(&conn, article_id) {
-                    Ok(article) if article.creater == username => {
-                        ctx.insert("article", &article);
-                        match articlerepo::find_article_content_by_id(&conn, article_id) {
-                            Ok(article_content) => {
-                                ctx.insert("article_content", &article_content.get_content())
-                            }
-                            _ => (),
-                        };
+        let mut conn = web_util::get_conn_or_busy_error(&pool)?;
+        match articlerepo::find_article_by_id(&mut conn, article_id) {
+            Ok(article) if article.creater == username => {
+                ctx.insert("article", &article);
+                match articlerepo::find_article_content_by_id(&mut conn, article_id) {
+                    Ok(article_content) => {
+                        ctx.insert("article_content", &article_content.get_content())
                     }
-                    _ => {
-                        return HttpResponse::NotFound()
-                            .content_type("text/html")
-                            .body("文章不存在")
-                    }
+                    _ => (),
                 };
             }
-            None => return result::internal_server_error(String::from("服务器繁忙请稍后再试")),
+            _ => {
+                return Ok(HttpResponse::NotFound()
+                    .content_type("text/html")
+                    .body("文章不存在"))
+            }
         };
     };
 
     let body = tmpl.render(&tmpl_name, &ctx).unwrap();
-    HttpResponse::Ok().content_type("text/html").body(body)
+    Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }

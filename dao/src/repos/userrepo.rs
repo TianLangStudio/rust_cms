@@ -7,7 +7,7 @@ use log::{info, warn};
 
 pub type DbConnection = db_util::DbConnection;
 
-pub fn add_login_info(conn: &DbConnection, new_login_info: &NewLoginInfo) -> Result<usize, Error> {
+pub fn add_login_info(conn: &mut DbConnection, new_login_info: &NewLoginInfo) -> Result<usize, Error> {
     info!("add login info username:{}", new_login_info.username);
     let signed_login_info = NewLoginInfo {
         username: new_login_info.username,
@@ -19,7 +19,7 @@ pub fn add_login_info(conn: &DbConnection, new_login_info: &NewLoginInfo) -> Res
 }
 
 pub fn change_password(
-    conn: &DbConnection,
+    conn: &mut DbConnection,
     login_info_id: i64,
     old_password: &str,
     new_password: &str,
@@ -48,13 +48,13 @@ pub fn change_password(
     }
 }
 
-pub fn remove_login_info(conn: &DbConnection, login_info_id: i64) -> Result<usize, Error> {
+pub fn remove_login_info(conn: &mut DbConnection, login_info_id: i64) -> Result<usize, Error> {
     use self::tb_login_info::dsl::*;
     let target = tb_login_info.filter(id.eq(login_info_id));
     diesel::delete(target).execute(conn)
 }
 
-pub fn valid_login_info(conn: &DbConnection, uname: &str, passwd: &str) -> bool {
+pub fn valid_login_info(conn: &mut DbConnection, uname: &str, passwd: &str) -> bool {
     let signed_passwd = signed_password(passwd, uname);
     info!("signed_passwd:{}, username: {}", &signed_passwd, uname);
     use self::tb_login_info::dsl::*;

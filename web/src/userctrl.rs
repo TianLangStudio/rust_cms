@@ -3,6 +3,7 @@ use actix_web::{get, post, web, HttpResponse, Responder};
 use diesel::r2d2::{self, ConnectionManager};
 
 use log::{info, warn};
+use common::db_util;
 
 use super::web_util;
 use common::result::AjaxResult;
@@ -24,7 +25,8 @@ async fn register(pool: web::Data<Pool>, login_info: web::Json<LoginInfo>) -> im
         username: &login_info.username,
         password: &login_info.password,
     };
-    match userrepo::add_login_info(&pool.get().unwrap(), &new_login_info) {
+    let mut conn = db_util::get_conn(&pool).unwrap();
+    match userrepo::add_login_info(&mut conn, &new_login_info) {
         Ok(info) => HttpResponse::Ok().json(AjaxResult::success_with_single(info)),
         Err(err) => HttpResponse::Forbidden().json(AjaxResult::<String>::fail(err.to_string())),
     }
@@ -58,9 +60,9 @@ async fn login(
         }
         _ => {
             info!("{} login now", login_info.username);
-
+            let mut conn = db_util::get_conn(&pool).unwrap();
             match userrepo::valid_login_info(
-                &pool.get().unwrap(),
+                &mut conn,
                 &login_info.username,
                 &login_info.password,
             ) {

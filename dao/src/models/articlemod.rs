@@ -3,13 +3,13 @@ use std::time::SystemTime;
 use diesel::sql_types::Datetime;
 use serde::{Deserialize, Serialize};
 
-use crate::schema::{tb_article, tb_article_content};
+use crate::schema::{tb_article, tb_draft_article, tb_article_content};
 
 pub const ARTICLE_STATUS_NEW: i32 = 0;
 pub const ARTICLE_STATUS_PUBLISHED: i32 = 8;
 
 #[derive(Serialize, Deserialize, AsChangeset, Insertable, Queryable)]
-#[table_name = "tb_article"]
+#[diesel(table_name = tb_article)]
 pub struct ArticleModel {
     pub id: String,
     pub title: Option<String>,
@@ -23,8 +23,23 @@ pub struct ArticleModel {
     pub update_at: chrono::NaiveDateTime,
 }
 
+#[derive(Serialize, Deserialize, AsChangeset, Insertable, Queryable)]
+#[diesel(table_name = tb_draft_article)]
+pub struct ArticleDraftModel {
+    pub id: String,
+    pub title: Option<String>,
+    pub subtitle: Option<String>,
+    pub intro: Option<String>,
+    pub rcmd_weight: Option<i32>,
+    pub url: Option<String>,
+    pub status: Option<i32>,
+    pub approver: String,
+    pub creater: String,
+    pub create_at: chrono::NaiveDateTime,
+    pub update_at: chrono::NaiveDateTime,
+}
 #[derive(Insertable)]
-#[table_name = "tb_article"]
+#[diesel(table_name = tb_article)]
 pub struct NewArticleModel<'a> {
     pub id: &'a str,
     pub title: &'a str,
@@ -56,7 +71,7 @@ pub struct EditArticle {
 }
 
 #[derive(AsChangeset)]
-#[table_name = "tb_article"]
+#[diesel(table_name = tb_article)]
 pub struct EditArticleModel {
     pub id: String,
     pub title: Option<String>,
@@ -69,7 +84,7 @@ pub struct EditArticleModel {
 }
 
 #[derive(AsChangeset, Queryable)]
-#[table_name = "tb_article_content"]
+#[diesel(table_name = tb_article_content)]
 #[derive(Serialize, Deserialize)]
 pub struct ArticleContentModel {
     pub id: String,
@@ -89,7 +104,7 @@ impl ArticleContentModel {
 }
 
 #[derive(Insertable)]
-#[table_name = "tb_article_content"]
+#[diesel(table_name = tb_article_content)]
 pub struct NewArticleContentModel<'a> {
     pub id: &'a str,
     pub article_id: &'a str,

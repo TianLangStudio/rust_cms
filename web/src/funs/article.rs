@@ -20,7 +20,7 @@ pub fn make_list_recommend_articles(pool: db_util::Pool) -> super::GlobalFn {
 
 fn make_list_by_page<T>(pool: db_util::Pool, list_by_page: T) -> super::GlobalFn
 where
-    T: Fn(&articlerepo::DbConnection, i64, i64) -> articlerepo::ListAriticleResult
+    T: Fn(&mut articlerepo::DbConnection, i64, i64) -> articlerepo::ListArticleResult
         + Send
         + Sync
         + 'static,
@@ -35,11 +35,11 @@ where
         let page_no: i64 = from_value(page_no.clone()).unwrap();
         let page_size: i64 = from_value(page_size.clone()).unwrap();
 
-        let conn = match db_util::get_conn(&pool) {
+        let mut conn = match db_util::get_conn(&pool) {
             Some(conn) => conn,
             None => return Err("oops".into()),
         };
-        match list_by_page(&conn, page_no, page_size) {
+        match list_by_page(&mut conn, page_no, page_size) {
             Ok(articles) => Ok(to_value(articles).unwrap()),
             _ => Err("oops".into()),
         }

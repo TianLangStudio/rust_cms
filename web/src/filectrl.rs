@@ -118,7 +118,7 @@ async fn save_file(
         creater: username,
     };
     match db_util::get_conn(pool) {
-        Some(conn) => match filerepo::add_file(&conn, &new_file_mod) {
+        Some(mut conn) => match filerepo::add_file(&mut conn, &new_file_mod) {
             Ok(_) => (),
             Err(err) => {
                 error!("err:{}", err);

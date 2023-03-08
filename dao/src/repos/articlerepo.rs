@@ -9,14 +9,14 @@ use diesel::result::Error;
 use log::{info, warn};
 
 pub type DbConnection = db_util::DbConnection;
-pub type ListAriticleResult = Result<Vec<ArticleModel>, Error>;
+pub type ListArticleResult = Result<Vec<ArticleModel>, Error>;
 
 pub fn add_article(
-    conn: &DbConnection,
+    conn: &mut DbConnection,
     new_article: EditArticle,
     username: &str,
 ) -> Result<String, Error> {
-    conn.transaction::<_, Error, _>(|| {
+    conn.transaction::<_, Error, _>(|conn| {
         let id: String = db_util::uuid();
         let content = &new_article.content;
         let subtitle = match &new_article.subtitle {
@@ -51,7 +51,7 @@ pub fn add_article(
     })
 }
 
-pub fn edit_article_info(conn: &DbConnection, edit_article: &EditArticle) -> Result<usize, Error> {
+pub fn edit_article_info(conn: &mut DbConnection, edit_article: &EditArticle) -> Result<usize, Error> {
     let id = edit_article.id.as_ref().unwrap();
     let edit_article_model = EditArticleModel {
         id: id.clone(),
@@ -73,7 +73,7 @@ pub fn edit_article_info(conn: &DbConnection, edit_article: &EditArticle) -> Res
 pub fn publish_article(
     article_id: &str,
     content_id: &str,
-    conn: &DbConnection,
+    conn: &mut DbConnection,
 ) -> Result<usize, Error> {
     publish_article_content(article_id, content_id, conn)?;
     publish_article_info(article_id, conn)
@@ -82,7 +82,7 @@ pub fn publish_article(
 fn publish_article_content(
     atl_id: &str,
     content_id: &str,
-    conn: &DbConnection,
+    conn: &mut DbConnection,
 ) -> Result<usize, Error> {
     use self::tb_article_content::dsl;
     diesel::update(dsl::tb_article_content)
@@ -95,7 +95,7 @@ fn publish_article_content(
         .execute(conn)
 }
 
-fn publish_article_info(article_id: &str, conn: &DbConnection) -> Result<usize, Error> {
+fn publish_article_info(article_id: &str, conn: &mut DbConnection) -> Result<usize, Error> {
     use self::tb_article::dsl;
     diesel::update(dsl::tb_article)
         .filter(dsl::id.eq(article_id))
@@ -106,7 +106,7 @@ fn publish_article_info(article_id: &str, conn: &DbConnection) -> Result<usize, 
  * 文章内容更新并不更新原来的记录而是新增记录，这样后期可以支持回滚，多版本
  * **/
 pub fn save_article_content(
-    conn: &DbConnection,
+    conn: &mut DbConnection,
     new_article_content: &NewArticleContentModel<'_>,
 ) -> Result<usize, Error> {
     diesel::insert_into(tb_article_content::table)
@@ -120,7 +120,7 @@ pub fn save_article_content(
  * **/
 
 pub fn remove_article_content(
-    conn: &DbConnection,
+    conn: &mut DbConnection,
     saved: i64,
     article_id_find: &str,
 ) -> Result<usize, Error> {
@@ -143,7 +143,7 @@ pub fn remove_article_content(
         _ => Ok(0),
     }
 }
-pub fn list_new_article(conn: &DbConnection, page_no: i64, page_size: i64) -> ListAriticleResult {
+pub fn list_new_article(conn: &mut DbConnection, page_no: i64, page_size: i64) -> ListArticleResult {
     use self::tb_article::dsl;
     let (limit, offset) = db_util::page2limit_offset(page_no, page_size);
     info!("limit:{}, offset:{}", &limit, &offset);
@@ -157,10 +157,10 @@ pub fn list_new_article(conn: &DbConnection, page_no: i64, page_size: i64) -> Li
 }
 
 pub fn list_recommend_article(
-    conn: &DbConnection,
+    conn: &mut DbConnection,
     page_no: i64,
     page_size: i64,
-) -> ListAriticleResult {
+) -> ListArticleResult {
     use self::tb_article::dsl;
     let (limit, offset) = db_util::page2limit_offset(page_no, page_size);
     dsl::tb_article
@@ -171,13 +171,13 @@ pub fn list_recommend_article(
         .load::<ArticleModel>(conn)
 }
 
-pub fn find_article_by_id(conn: &DbConnection, id: &str) -> Result<ArticleModel, Error> {
+pub fn find_article_by_id(conn: &mut DbConnection, id: &str) -> Result<ArticleModel, Error> {
     use self::tb_article::dsl;
     dsl::tb_article.find(id).first(conn)
 }
 
 pub fn find_article_content_by_id(
-    conn: &DbConnection,
+    conn: &mut DbConnection,
     find_article_id: &str,
 ) -> Result<ArticleContentModel, Error> {
     use self::tb_article_content::dsl;

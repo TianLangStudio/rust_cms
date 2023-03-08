@@ -3,7 +3,7 @@ use actix_web::{HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 use common::config_util;
-use common::result;
+use common::{db_util, result};
 use common::sign_util::*;
 
 pub const SESSION_USER_KEY: &str = "user_info";
@@ -54,6 +54,9 @@ pub fn ok_without_data() -> impl Responder {
     HttpResponse::Ok().json(result::AjaxResult::<bool>::success_without_data())
 }
 
+pub fn get_conn_or_busy_error(pool: &db_util::Pool) -> Result<db_util::PooledConnection, actix_web::Error> {
+    db_util::get_conn(pool).ok_or(actix_web::error::ErrorInternalServerError("Server is busy"))
+}
 #[derive(Serialize, Deserialize)]
 pub struct Page {
     pub page_no: Option<i64>,

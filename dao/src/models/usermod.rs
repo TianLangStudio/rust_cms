@@ -9,7 +9,7 @@ pub struct LoginInfoModel {
 }
 
 #[derive(Insertable)]
-#[table_name = "tb_login_info"]
+#[diesel(table_name = tb_login_info)]
 pub struct NewLoginInfo<'a> {
     pub username: &'a str,
     pub password: &'a str,
