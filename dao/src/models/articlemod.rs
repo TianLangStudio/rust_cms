@@ -33,10 +33,42 @@ pub struct ArticleDraftModel {
     pub rcmd_weight: Option<i32>,
     pub url: Option<String>,
     pub status: Option<i32>,
-    pub approver: String,
+    pub approver: Option<String>,
     pub creater: String,
     pub create_at: chrono::NaiveDateTime,
     pub update_at: chrono::NaiveDateTime,
+}
+impl ArticleDraftModel {
+    pub fn to_publish_model(&self) -> ArticleModel {
+        ArticleModel{
+            id: self.id.clone(),
+            title: self.title.clone(),
+            subtitle: self.subtitle.clone(),
+            intro: self.intro.clone(),
+            rcmd_weight: self.rcmd_weight.clone(),
+            url: self.url.clone(),
+            status: self.status.clone(),
+            creater: self.creater.clone(),
+            create_at: self.create_at.clone(),
+            update_at: self.update_at.clone()
+        }
+    }
+}
+impl From<ArticleDraftModel> for ArticleModel{
+    fn from(draft: ArticleDraftModel) -> Self {
+        ArticleModel {
+            id: draft.id,
+            title: draft.title,
+            subtitle: draft.subtitle,
+            intro: draft.intro,
+            rcmd_weight: draft.rcmd_weight,
+            url: draft.url,
+            status: draft.status,
+            creater: draft.creater,
+            create_at: draft.create_at,
+            update_at: draft.update_at
+        }
+    }
 }
 #[derive(Insertable)]
 #[diesel(table_name = tb_article)]

@@ -1,8 +1,12 @@
+use std::fs::File;
+use std::io::BufReader;
 use actix_files as fs;
 use actix_session::{SessionMiddleware, storage::CookieSessionStore};
 use actix_web::cookie::Key;
 use actix_web::{web, App, HttpServer};
-use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
+use rustls::{Certificate, PrivateKey, ServerConfig};
+use rustls_pemfile::{certs, pkcs8_private_keys};
+
 use log::*;
 
 use tera::Tera;
@@ -65,12 +69,8 @@ async fn main() -> std::io::Result<()> {
     });
 
     if is_prod {
-        let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
-        builder
-            .set_private_key_file("./conf/key.pem", SslFiletype::PEM)
-            .unwrap();
-        builder.set_certificate_chain_file("./conf/cert.pem").unwrap();
-        server.bind_openssl("127.0.0.1:8443", builder)?.run().await
+        let config = load_rustls_config();
+        server.bind_rustls("127.0.0.1:8443", config)?.run().await
     } else {
         let port = config_util::APP_CONFIG
             .get_string("tl.app.http.port")
@@ -81,4 +81,36 @@ async fn main() -> std::io::Result<()> {
         let host_port = host + ":" + &port;
         server.bind(&host_port)?.run().await
     }
+}
+
+
+fn load_rustls_config() -> rustls::ServerConfig {
+    // init server config builder with safe defaults
+    let config = ServerConfig::builder()
+        .with_safe_defaults()
+        .with_no_client_auth();
+
+    // load TLS key/cert files
+    let cert_file = &mut BufReader::new(File::open("cert.pem").unwrap());
+    let key_file = &mut BufReader::new(File::open("key.pem").unwrap());
+
+    // convert files to key/cert objects
+    let cert_chain = certs(cert_file)
+        .unwrap()
+        .into_iter()
+        .map(Certificate)
+        .collect();
+    let mut keys: Vec<PrivateKey> = pkcs8_private_keys(key_file)
+        .unwrap()
+        .into_iter()
+        .map(PrivateKey)
+        .collect();
+
+    // exit if no keys could be parsed
+    if keys.is_empty() {
+        eprintln!("Could not locate PKCS 8 private keys.");
+        std::process::exit(1);
+    }
+
+    config.with_single_cert(cert_chain, keys.remove(0)).unwrap()
 }

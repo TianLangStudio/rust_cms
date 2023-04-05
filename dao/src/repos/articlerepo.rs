@@ -2,11 +2,13 @@ use std::time::SystemTime;
 
 use crate::models::articlemod::*;
 use crate::repos;
-use crate::schema::{tb_article, tb_article_content};
-use common::db_util;
+use crate::schema::{tb_article, tb_article_content, tb_draft_article};
+use common::{config_util, db_util};
 use diesel::prelude::*;
 use diesel::result::Error;
 use log::{info, warn};
+//use crate::schema::tb_article::dsl::tb_article;
+
 
 pub type DbConnection = db_util::DbConnection;
 pub type ListArticleResult = Result<Vec<ArticleModel>, Error>;
@@ -23,7 +25,8 @@ pub fn add_article(
             Some(subtitle) => &subtitle,
             None => "",
         };
-        let new_article_model = ArticleModel {
+
+        let draft_article_model = ArticleDraftModel {
             id: id.clone(),
             title: new_article.title,
             subtitle: new_article.subtitle,
@@ -31,18 +34,30 @@ pub fn add_article(
             rcmd_weight: new_article.rcmd_weight,
             url: new_article.url,
             status: Some(ARTICLE_STATUS_NEW),
+            approver: None,
             creater: String::from(username),
             create_at: chrono::Utc::now().naive_local(),
             update_at: chrono::Utc::now().naive_local(),
         };
-        diesel::insert_into(tb_article::table)
-            .values(&new_article_model)
-            .execute(conn);
+        match config_util::need_approval() {
+            false => {
+                let publish_article: ArticleModel= draft_article_model.into();
+                diesel::insert_into(tb_article::table)
+                    .values(&publish_article)
+                    .execute(conn);
+
+            }, //does not need approval insert into tb_article
+            true => {
+                diesel::insert_into(tb_draft_article::table)
+                    .values(&draft_article_model)
+                    .execute(conn);
+            },//need approval insert into tb_draft_article first
+        };
         if content.is_some() {
             let new_article_content = NewArticleContentModel {
-                id: &new_article_model.id,
-                article_id: &new_article_model.id,
-                content: &content.as_ref().unwrap(),
+                id: id.as_str(),
+                article_id: id.as_str(),
+                content: content.as_ref().unwrap(),
                 create_at: Some(chrono::Utc::now().naive_local()),
             };
             save_article_content(conn, &new_article_content)?;

@@ -1,4 +1,4 @@
 tl:
    app:
            db:
-                url:  mysql://root:root@192.168.0.101:3306/rust_cms
+                url:  mysql://rust_cms:123456@192.168.0.101:23306/rust_cms

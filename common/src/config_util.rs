@@ -1,4 +1,4 @@
-use config::{Config, ConfigBuilder};
+use config::{Config, ConfigBuilder, Value};
 use lazy_static::lazy_static;
 
 lazy_static! {
@@ -29,5 +29,19 @@ pub fn is_prod() -> bool {
     match APP_CONFIG.get_string("tl.app.mode") {
         Ok(value) if value == "prod" => true,
         _ => false,
+    }
+}
+
+pub fn need_approval() -> bool {
+    match APP_CONFIG.get_bool("tl.app.approval.enable") {
+        Ok(value) => true,
+        _ => false,
+    }
+}
+
+pub fn approvers() -> Vec<Value> {
+    match APP_CONFIG.get_array("tl.app.approval.users") {
+        Ok(values) => values,
+        _ => vec![]
     }
 }

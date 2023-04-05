@@ -57,23 +57,22 @@ async fn admin_save_article(
                         &edit_article.id.as_ref().unwrap(),
                         &content
                     );
-                    match articlerepo::save_article_content(&mut conn, &new_article_content) {
+                    return match articlerepo::save_article_content(&mut conn, &new_article_content) {
                         Ok(_) => {
-
                             let _ = articlerepo::remove_article_content(
                                 &mut conn,
                                 3,
                                 &edit_article.id.as_ref().unwrap(),
                             );
                             let ids = PublishParams {
-                                article_id:  article_id.clone(),
+                                article_id: article_id.clone(),
                                 content_id: content_id.clone(),
                             };
-                            return    HttpResponse::Ok().json(result::AjaxResult::<PublishParams>::success_with_single(
+                            HttpResponse::Ok().json(result::AjaxResult::<PublishParams>::success_with_single(
                                 ids,
-                            ));
+                            ))
                         }
-                        Err(err) => return result::forbidden_with_errmsg(err.to_string()),
+                        Err(err) => result::forbidden_with_errmsg(err.to_string()),
                     };
                 }
                 let ids = PublishParams {
