@@ -3,9 +3,10 @@ use std::time::SystemTime;
 use diesel::sql_types::Datetime;
 use serde::{Deserialize, Serialize};
 
-use crate::schema::{tb_article, tb_draft_article, tb_article_content};
+use crate::schema::{tb_article, tb_article_content};
 
 pub const ARTICLE_STATUS_NEW: i32 = 0;
+pub const ARTICLE_STATUS_UNDER_REVIEW: i32 = 1;
 pub const ARTICLE_STATUS_PUBLISHED: i32 = 8;
 
 #[derive(Serialize, Deserialize, AsChangeset, Insertable, Queryable)]
@@ -22,7 +23,7 @@ pub struct ArticleModel {
     pub create_at: chrono::NaiveDateTime,
     pub update_at: chrono::NaiveDateTime,
 }
-
+/*
 #[derive(Serialize, Deserialize, AsChangeset, Insertable, Queryable)]
 #[diesel(table_name = tb_draft_article)]
 pub struct ArticleDraftModel {
@@ -53,8 +54,8 @@ impl ArticleDraftModel {
             update_at: self.update_at.clone()
         }
     }
-}
-impl From<ArticleDraftModel> for ArticleModel{
+}*/
+/*impl From<ArticleDraftModel> for ArticleModel{
     fn from(draft: ArticleDraftModel) -> Self {
         ArticleModel {
             id: draft.id,
@@ -69,7 +70,7 @@ impl From<ArticleDraftModel> for ArticleModel{
             update_at: draft.update_at
         }
     }
-}
+}*/
 #[derive(Insertable)]
 #[diesel(table_name = tb_article)]
 pub struct NewArticleModel<'a> {
@@ -139,6 +140,7 @@ impl ArticleContentModel {
 #[diesel(table_name = tb_article_content)]
 pub struct NewArticleContentModel<'a> {
     pub id: &'a str,
+    pub status: i32,
     pub article_id: &'a str,
     pub content: &'a str,
     pub create_at: Option<chrono::NaiveDateTime>,
@@ -148,6 +150,7 @@ impl <'a> NewArticleContentModel<'a> {
     pub fn new(content_id:&'a str,  article_id: &'a str, content:&'a str) -> Self {
             Self {
                 id: content_id,
+                status: ARTICLE_STATUS_NEW,
                 article_id,
                 content,
                 create_at: Some(chrono::Utc::now().naive_local()),

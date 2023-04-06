@@ -15,12 +15,12 @@ pub type DbConnection = userrepo::DbConnection;
 pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 
 #[get("/admin/test")]
-async fn admin_test(session: Session) -> impl Responder {
+pub(crate) async fn admin_test(session: Session) -> impl Responder {
     let username = web_util::get_username_from_session(&session).unwrap();
     format!("Hello, {}", username)
 }
 #[post("/api/register")]
-async fn register(pool: web::Data<Pool>, login_info: web::Json<LoginInfo>) -> impl Responder {
+pub(crate) async fn register(pool: web::Data<Pool>, login_info: web::Json<LoginInfo>) -> impl Responder {
     let new_login_info = NewLoginInfo {
         username: &login_info.username,
         password: &login_info.password,
@@ -36,7 +36,7 @@ const SESSION_USER_KEY: &str = web_util::SESSION_USER_KEY;
 const SESSION_USER_KEY_SIGN: &str = web_util::SESSION_USER_KEY_SIGN;
 
 #[post("/api/login")]
-async fn login(
+pub(crate) async fn login(
     session: Session,
     pool: web::Data<Pool>,
     login_info: web::Json<LoginInfo>,
@@ -85,7 +85,7 @@ async fn login(
 }
 
 #[get("/api/logout")]
-async fn logout(session: Session) -> impl Responder {
+pub(crate) async fn logout(session: Session) -> impl Responder {
     session.remove(SESSION_USER_KEY_SIGN);
     session.remove(SESSION_USER_KEY);
     web_util::ok_without_data()

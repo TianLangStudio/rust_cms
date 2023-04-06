@@ -6,12 +6,12 @@ use tera::{self, Tera};
 
 /// 网站favicon文件
 #[get("/favicon.ico")]
-async fn favicon() -> Result<fs::NamedFile> {
+pub(crate) async fn favicon() -> Result<fs::NamedFile> {
     Ok(fs::NamedFile::open("static/img/favicon.ico")?)
 }
 
 #[get("/")]
-async fn index(session: Session, tmpl: web::Data<Tera>) -> impl Responder {
+pub(crate) async fn index(session: Session, tmpl: web::Data<Tera>) -> impl Responder {
     let tmpl_name = web_util::get_tmpl_from_session(&session);
     let tmpl_name = tmpl_name + "/index.html";
 

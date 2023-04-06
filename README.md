@@ -18,7 +18,9 @@ It is a project for learning. Don't use it in production!!!.
 - [x]  Tera模板/自定义函数等
 - [x]  支持Markdown 
 - [ ]  我的文章页面
-- [ ]  支持审核发布状态　
+- [x]  支持审核发布状态　  
+    可以通过配置项 tl.app.approval.enable=true开启，并通过tl.app.approval.users=usernameA,usernameB...设置审核人
+    已发布的文章重新修改会立即取消发布需重新审核
 - [ ]  支持graphql
 ---  
 

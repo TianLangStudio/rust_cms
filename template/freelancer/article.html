@@ -25,6 +25,16 @@
                             <a target="_blank" href="/article/admin/edit/{{article_info.id}}">编辑</a>
                     </span>
               {% endif %}
+              {% if  isApprover and isUnderReview %}
+                    <hr/>
+                    <span class="meta text-right">
+                            <a target="_blank" href="javascript:approveArticle('{{article_info.id}}','{{article_content.id}}', true);return false;">发布</a>
+                    </span>
+                     <span class="meta text-right">
+                            <a target="_blank" href="javascript:approveArticle('{{article_info.id}}','{{article_content.id}}', false);return false;">退回</a>
+                    </span>
+              {% endif %}
+
           </div>
         </div>
       </div>
@@ -39,4 +49,7 @@
     </div>
     </div>
     </article>
+
+<script src="/static/com/tuieditor/2.3.0/toastui-editor-all.min.js"></script>
+<script src="/static/tmpl/freelancer/js/article.js"></script>
 {% endblock content%}

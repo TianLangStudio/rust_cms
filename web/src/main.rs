@@ -62,6 +62,7 @@ async fn main() -> std::io::Result<()> {
             // .service(articlectrl::admin_edit_article)//编辑文章接口
             .service(articlectrl::admin_edit_view) //文章编辑页面
             .service(articlectrl::view_article_by_id) //文章详情页面
+            .service(articlectrl::view_article_by_id_and_status) //文章详情页面
             .service(articlectrl::view_articles) //文章列表页面
             .service(fs::Files::new("/static", "static").show_files_listing()) //静态文件
             .service(indexctrl::favicon) //favicon

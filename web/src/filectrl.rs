@@ -25,7 +25,7 @@ pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 type UploadReslut = Either<HttpResponse, Result<HttpResponse, Error>>;
 
 #[post("/api/file/admin/upload")]
-async fn upload(mut multipart: Multipart, session: Session, pool: web::Data<Pool>) -> UploadReslut {
+pub(crate) async fn upload(mut multipart: Multipart, session: Session, pool: web::Data<Pool>) -> UploadReslut {
     let username = match web_util::get_username_from_session(&session) {
         Some(usernaem) => usernaem,
         None => return Either::Left(result::forbidden_with_errmsg(String::from("请先登录"))),
@@ -48,7 +48,7 @@ async fn upload(mut multipart: Multipart, session: Session, pool: web::Data<Pool
 }
 
 #[get("/api/file/{id}")]
-async fn view_file(path_params: web::Path<(String,)>) -> Result<fs::NamedFile> {
+pub(crate) async fn view_file(path_params: web::Path<(String,)>) -> Result<fs::NamedFile> {
     let path_params = path_params.into_inner();
     let file_id = &path_params.0;
     let path = Path::new(&*FILE_SAVE_PATH);

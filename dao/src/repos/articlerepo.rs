@@ -2,12 +2,12 @@ use std::time::SystemTime;
 
 use crate::models::articlemod::*;
 use crate::repos;
-use crate::schema::{tb_article, tb_article_content, tb_draft_article};
-use common::{config_util, db_util};
+use crate::schema::{tb_article, tb_article_content};
+use common::db_util;
 use diesel::prelude::*;
 use diesel::result::Error;
 use log::{info, warn};
-//use crate::schema::tb_article::dsl::tb_article;
+use crate::schema::tb_article_content::article_id;
 
 
 pub type DbConnection = db_util::DbConnection;
@@ -25,8 +25,7 @@ pub fn add_article(
             Some(subtitle) => &subtitle,
             None => "",
         };
-
-        let draft_article_model = ArticleDraftModel {
+        let new_article_model = ArticleModel {
             id: id.clone(),
             title: new_article.title,
             subtitle: new_article.subtitle,
@@ -34,30 +33,19 @@ pub fn add_article(
             rcmd_weight: new_article.rcmd_weight,
             url: new_article.url,
             status: Some(ARTICLE_STATUS_NEW),
-            approver: None,
             creater: String::from(username),
             create_at: chrono::Utc::now().naive_local(),
             update_at: chrono::Utc::now().naive_local(),
         };
-        match config_util::need_approval() {
-            false => {
-                let publish_article: ArticleModel= draft_article_model.into();
-                diesel::insert_into(tb_article::table)
-                    .values(&publish_article)
-                    .execute(conn);
-
-            }, //does not need approval insert into tb_article
-            true => {
-                diesel::insert_into(tb_draft_article::table)
-                    .values(&draft_article_model)
-                    .execute(conn);
-            },//need approval insert into tb_draft_article first
-        };
+        diesel::insert_into(tb_article::table)
+            .values(&new_article_model)
+            .execute(conn);
         if content.is_some() {
             let new_article_content = NewArticleContentModel {
-                id: id.as_str(),
-                article_id: id.as_str(),
-                content: content.as_ref().unwrap(),
+                id: &new_article_model.id,
+                status: ARTICLE_STATUS_NEW,
+                article_id: &new_article_model.id,
+                content: &content.as_ref().unwrap(),
                 create_at: Some(chrono::Utc::now().naive_local()),
             };
             save_article_content(conn, &new_article_content)?;
@@ -65,7 +53,30 @@ pub fn add_article(
         Ok(id)
     })
 }
+//return (article_id, content_id)
+pub fn edit_article(conn: &mut DbConnection, edit_article: EditArticle) -> Result<(String, Option<String>), Error> {
+    conn.transaction(|conn| {
+        let mut content_id_opt: Option<String>  = None;
+        if let Some(content) = &edit_article.content {
+            let content_id = db_util::uuid();
+            let new_article_content = NewArticleContentModel::new(
+                &content_id,
+                &edit_article.id.as_ref().unwrap(),
+                &content
+            );
+            save_article_content(conn, &new_article_content);
+            remove_article_content(
+                 conn,
+                6,
+                &edit_article.id.as_ref().unwrap(),
+            );
+            content_id_opt = Some(content_id);
+        }
+        edit_article_info(conn, &edit_article)?;
+        Ok((edit_article.id.unwrap(), content_id_opt))
+    })
 
+}
 pub fn edit_article_info(conn: &mut DbConnection, edit_article: &EditArticle) -> Result<usize, Error> {
     let id = edit_article.id.as_ref().unwrap();
     let edit_article_model = EditArticleModel {
@@ -75,7 +86,8 @@ pub fn edit_article_info(conn: &mut DbConnection, edit_article: &EditArticle) ->
         intro: edit_article.intro.clone(),
         rcmd_weight: edit_article.rcmd_weight.clone(),
         url: edit_article.url.clone(),
-        status: edit_article.status.clone(),
+        //status: edit_article.status.clone(),
+        status: Some(ARTICLE_STATUS_NEW), //we should set article's status as new while editing
         update_at: chrono::Utc::now().naive_local(),
     };
 
@@ -86,12 +98,29 @@ pub fn edit_article_info(conn: &mut DbConnection, edit_article: &EditArticle) ->
 }
 
 pub fn publish_article(
-    article_id: &str,
+    atl_id: &str,
     content_id: &str,
     conn: &mut DbConnection,
 ) -> Result<usize, Error> {
-    publish_article_content(article_id, content_id, conn)?;
-    publish_article_info(article_id, conn)
+    conn.transaction(|conn| {
+        publish_article_content(content_id, content_id, conn)?;
+        publish_article_info(atl_id, conn)
+    })
+}
+
+
+pub fn submit_review(atl_id: &str, content_id: &str, conn: &mut DbConnection) -> Result<usize, Error> {
+    conn.transaction(|conn| {
+        change_article_info_status(atl_id, ARTICLE_STATUS_UNDER_REVIEW, conn)?;
+        change_article_content_status(content_id, ARTICLE_STATUS_UNDER_REVIEW, conn)
+    })
+}
+
+pub fn reject_review(atl_id: &str, content_id: &str, conn: &mut DbConnection) -> Result<usize, Error> {
+    conn.transaction(|conn| {
+        change_article_info_status(atl_id, ARTICLE_STATUS_NEW, conn)?;
+        change_article_content_status(content_id, ARTICLE_STATUS_NEW, conn)
+    })
 }
 
 fn publish_article_content(
@@ -99,22 +128,28 @@ fn publish_article_content(
     content_id: &str,
     conn: &mut DbConnection,
 ) -> Result<usize, Error> {
+    change_article_content_status(content_id, ARTICLE_STATUS_PUBLISHED, conn)
+}
+fn change_article_content_status(content_id: &str, status:i32, conn: &mut DbConnection) -> Result<usize, Error> {
     use self::tb_article_content::dsl;
-    diesel::update(dsl::tb_article_content)
-        .filter(dsl::article_id.eq(atl_id))
-        .set(dsl::status.eq(ARTICLE_STATUS_NEW))
-        .execute(conn);
+
     diesel::update(dsl::tb_article_content)
         .filter(dsl::id.eq(content_id))
-        .set(dsl::status.eq(ARTICLE_STATUS_PUBLISHED))
+        .set(dsl::status.eq(status))
         .execute(conn)
 }
+fn publish_article_info(atl_id: &str, conn: &mut DbConnection) -> Result<usize, Error> {
+    change_article_info_status(atl_id, ARTICLE_STATUS_PUBLISHED, conn)
+}
 
-fn publish_article_info(article_id: &str, conn: &mut DbConnection) -> Result<usize, Error> {
+/**
+ change the status of article
+ ***/
+fn change_article_info_status(atl_id: &str, status: i32, conn: &mut DbConnection) -> Result<usize, Error> {
     use self::tb_article::dsl;
     diesel::update(dsl::tb_article)
-        .filter(dsl::id.eq(article_id))
-        .set(dsl::status.eq(ARTICLE_STATUS_PUBLISHED))
+        .filter(dsl::id.eq(atl_id))
+        .set(dsl::status.eq(status))
         .execute(conn)
 }
 /**
@@ -158,20 +193,20 @@ pub fn remove_article_content(
         _ => Ok(0),
     }
 }
-pub fn list_new_article(conn: &mut DbConnection, page_no: i64, page_size: i64) -> ListArticleResult {
+pub fn list_new_article_info(conn: &mut DbConnection, page_no: i64, page_size: i64, status: i32) -> ListArticleResult {
     use self::tb_article::dsl;
     let (limit, offset) = db_util::page2limit_offset(page_no, page_size);
     info!("limit:{}, offset:{}", &limit, &offset);
 
     dsl::tb_article
-        .filter(dsl::status.eq(ARTICLE_STATUS_PUBLISHED))
+        .filter(dsl::status.eq(status))
         .order(dsl::update_at.desc())
         .limit(limit)
         .offset(offset)
         .load::<ArticleModel>(conn)
 }
 
-pub fn list_recommend_article(
+pub fn list_recommend_article_info(
     conn: &mut DbConnection,
     page_no: i64,
     page_size: i64,
@@ -191,14 +226,15 @@ pub fn find_article_by_id(conn: &mut DbConnection, id: &str) -> Result<ArticleMo
     dsl::tb_article.find(id).first(conn)
 }
 
-pub fn find_article_content_by_id(
+pub fn find_article_content_by_id_and_status(
     conn: &mut DbConnection,
     find_article_id: &str,
+    article_status: &Option<i32>,
 ) -> Result<ArticleContentModel, Error> {
     use self::tb_article_content::dsl;
     dsl::tb_article_content
         .filter(dsl::article_id.eq(find_article_id))
-        .filter(dsl::status.eq(ARTICLE_STATUS_PUBLISHED))
+        .filter(dsl::status.eq(article_status.unwrap_or(ARTICLE_STATUS_PUBLISHED)))
         .order(dsl::create_at.desc())
         .first(conn)
 }

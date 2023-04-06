@@ -39,9 +39,10 @@ pub fn need_approval() -> bool {
     }
 }
 
-pub fn approvers() -> Vec<Value> {
-    match APP_CONFIG.get_array("tl.app.approval.users") {
-        Ok(values) => values,
-        _ => vec![]
+//set
+pub fn is_approver(username: &str) -> bool {
+    match APP_CONFIG.get_string("tl.app.approval.users") {
+        Ok(values) => values.split(",").any(|v| v == username),
+        _ => false
     }
 }

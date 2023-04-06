@@ -130,6 +130,19 @@
             tlShowAlert("失败了", "文章发布失败");
         })
     }
+    function approveArticle(articleId, contentId, isApproved) {
+        var url =  '/api/article/admin/approve/' + isApproved;
+        postJson(url, {
+            article_id: articleId,
+            content_id: contentId
+        }, function(resp) {
+            console.log(resp);
+            tlShowSucMsg("成功了",  "操作成功!");
+        }, function(resp) {
+            console.log(resp);
+            tlShowAlert("失败了", "操作失败了");
+        })
+    }
     function getSingleData(data) {
           data = data || [];
           if (data.length > 0) {

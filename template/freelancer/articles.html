@@ -16,11 +16,11 @@
     <div class="row">
     
       <div class="col-lg-8 col-md-10 mx-auto">
-        {% for article in list_new_articles(page_no=page_no,  page_size=page_size)  %}
+        {% for article in list_new_articles(page_no=page_no,  page_size=page_size, status=status)  %}
         {% if article.url %}
             {%set article_url=article.url %}
         {% else %}
-            {%set article_url='/view/article/' ~ article.id %}
+            {%set article_url='/view/article/' ~ article.id ~ '/' ~ status %}
         {% endif %}
         <div class="post-preview">
           <a href="{{article_url}}" target="_blank">
@@ -37,14 +37,20 @@
              发布于{{article.create_at|date(format="%Y年%m月%d日%H:%M")}}
              {% if  article.creater == username %} 
                     <a target="_blank" href="/article/admin/edit/{{article.id}}">编辑</a>
-            {% endif %}
+             {% endif %}
           </p>
         </div>
         <hr>
        {%endfor %}
         <!-- Pager -->
         <div class="clearfix">
-          <a class="btn btn-primary float-right" href="/view/articles?page_no={{page_no + 1}}&page_size=7">查看更多 &rarr;</a>
+            {% if  isUnderReview %}
+               {% set more_url = '/article/admin/under_review'%}
+            {% else %}
+               {% set more_url = '/view/articles'%}
+            {% endif %}
+
+            <a class="btn btn-primary float-right" href="{{more_url}}}?page_no={{page_no + 1}}&page_size=7">查看更多 &rarr;</a>
         </div>
         <hr>
       </div>
