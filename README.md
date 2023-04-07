@@ -1,48 +1,49 @@
 ![Rust CMS](./doc/imgs/screenshot.png)  
 
-⚠这是个学习用项目，不要直接用于生产  
-It is a project for learning. Don't use it in production!!!. 
+[Demo](https://www.tianlang.tech) run on [Ali Cloud](https://www.aliyun.com/minisite/goods?userCode=qtg5vupa)
 
-# 功能
-- [x]  登录登出
-- [x]  文件上传　　
-- [x]  文章列表   
-- [x]  最新更新文章列表获取
-- [x]  推荐文章列表获取
-- [x]  文章发布　 
-- [x]  文章详情　
-- [x]  actix-web 样例
-- [x]  diesel 样例 
-- [x]  session 
-- [x]  基于session的登录验证  
-- [x]  Tera模板/自定义函数等
-- [x]  支持Markdown 
-- [ ]  我的文章页面
-- [x]  支持审核发布状态　  
-    可以通过配置项 tl.app.approval.enable=true开启，并通过tl.app.approval.users=usernameA,usernameB...设置审核人
-    已发布的文章重新修改会立即取消发布需重新审核
-- [ ]  支持graphql
+⚠Don't use it in production!!!. It is a project for learning. 
+
+English|[中文](./README_CN.md)
+
+# Features
+- [x]  Login & Logout
+- [x]  File Upload　　
+- [x]  Articles list
+- [x]  Got new Articles
+- [x]  Got Recommend Articles
+- [x]  Publish Article Page　 
+- [x]  Article Details Page
+- [x]  actix-web demo
+- [x]  diesel demo
+- [x]  Support Session 
+- [x]  Login auth base on Session  
+- [x]  Tera Demo includes custom define Functions 
+- [x]  Support Markdown in write Article 
+- [ ]  My article page
+- [x]  Support under review　  
+    enable this feature by config tl.app.approval.enable=true and set who can approve through this configuration item tl.app.approval.users=usernameA,usernameB... 
+
+- [ ]  Support graphql
 ---  
 
-# 运行 
-如果已经安装了[Rust](https://www.rust-lang.org/tools/install)和[Docker](https://docs.docker.com/engine/install/) 可以直接执行脚本运行
-> ./bin/start.sh  
+# How to run
+```bash 
+git clone git@github.com:TianLangStudio/rust_cms.git     
+cd rust_cms
+```   
+If you have installed [Rust](https://www.rust-lang.org/tools/install) and [Docker](https://docs.docker.com/engine/install/), just execute the script below.  
+```bash 
+./bin/start.sh
+```  
+This command will run script to initial a MySQL database using docker and then run rust_cms using `Cargo run`
 
-脚本中会使用Docker初始化数据库并运行rust_cms,启动成功后就可以使用浏览器访问http://127.0.0.1:8088了  
+You could use a exists MySql database, installing **[Rust](https://www.rust-lang.org/tools/install)** is required
 
-你也可以自己初始化数据库,无论如何 **请先安装[Rust](https://www.rust-lang.org/tools/install)**  
-> git clone git@github.com:TianLangStudio/rust_cms.git     
-> cd rust_cms 
-- 创建Mysql数据库　导入doc/rust_cms.sql  
-- 修改conf/application_dev.yaml文件中的数据库链接配置　
-> cargo run
+- import doc/rust_cms.sql to your Mysql, this will create a database named rust_cms.  
+- edit conf/application_dev.yaml to change the database link information. 
+- now you can execute command `cargo run` to run rust_cms
 ---  
-
-# 使用Rust编写的内容管理系统(CMS)
-在项目[rust_login](https://github.com/TianLangStudio/rust_login)的基础上增加CMS功能 
-**开发中** 进度可关注[博客](https://blog.csdn.net/tianlangstudio/article/details/106169242)  
-
----
 
 # build error  
 1. throw an error when building third part lib
@@ -54,4 +55,6 @@ It is a project for learning. Don't use it in production!!!.
    > /usr/bin/ld: cannot find -lmysqlclient  
 
    install mysqlclient then build again ex. install mysqlclient in Ubuntu  
-   >  sudo apt-get install libmysqlclient-dev
+   >  sudo apt-get install libmysqlclient-dev 
+
+Contact [FusionZhu](https://www.upwork.com/freelancers/huanqingzhu) for more help 
