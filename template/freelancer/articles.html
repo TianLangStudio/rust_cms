@@ -16,7 +16,8 @@
     <div class="row">
     
       <div class="col-lg-8 col-md-10 mx-auto">
-        {% for article in list_new_articles(page_no=page_no,  page_size=page_size, status=status)  %}
+        {% set articles=list_new_articles(page_no=page_no,  page_size=page_size, status=status) %}
+        {% for article in articles  %}
         {% if article.url %}
             {%set article_url=article.url %}
         {% else %}
@@ -30,7 +31,6 @@
             <h3 class="post-subtitle">
                  {{article.subtitle | default(value='')}}
             </h3>
-     
           </a>
           <p class="post-meta">
             <a href="#">{{article.creater}}</a>
@@ -45,12 +45,16 @@
         <!-- Pager -->
         <div class="clearfix">
             {% if  isUnderReview %}
-               {% set more_url = '/article/admin/under_review'%}
+               {% set more_url = '/article/admin/under_review' %}
             {% else %}
-               {% set more_url = '/view/articles'%}
+               {% set more_url = '/view/articles' %}
             {% endif %}
-
-            <a class="btn btn-primary float-right" href="{{more_url}}}?page_no={{page_no + 1}}&page_size=7">查看更多 &rarr;</a>
+            {% set articleCount = articles|length %}
+            {% if articleCount >= page_size %}
+            <a class="btn btn-primary float-right" href="{{more_url}}?page_no={{page_no + 1}}&page_size=7">View More &rarr;</a>
+            {% else %}
+            No more
+            {% endif %}
         </div>
         <hr>
       </div>
