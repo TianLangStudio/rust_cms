@@ -7,7 +7,10 @@ use log::{info, warn};
 
 pub type DbConnection = db_util::DbConnection;
 
-pub fn add_login_info(conn: &mut DbConnection, new_login_info: &NewLoginInfo) -> Result<usize, Error> {
+pub fn add_login_info(
+    conn: &mut DbConnection,
+    new_login_info: &NewLoginInfo,
+) -> Result<usize, Error> {
     info!("add login info username:{}", new_login_info.username);
     let signed_login_info = NewLoginInfo {
         username: new_login_info.username,

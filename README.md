@@ -1,4 +1,4 @@
-![Rust CMS](./doc/imgs/screenshot.png)  
+![Rust CMS](./doc/imgs/rust_cms_screenshot_en.png)  
 
 [Demo](https://www.tianlang.tech) run on [Ali Cloud](https://www.aliyun.com/minisite/goods?userCode=qtg5vupa)
 

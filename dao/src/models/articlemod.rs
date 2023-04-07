@@ -146,14 +146,14 @@ pub struct NewArticleContentModel<'a> {
     pub create_at: Option<chrono::NaiveDateTime>,
 }
 
-impl <'a> NewArticleContentModel<'a> {
-    pub fn new(content_id:&'a str,  article_id: &'a str, content:&'a str) -> Self {
-            Self {
-                id: content_id,
-                status: ARTICLE_STATUS_NEW,
-                article_id,
-                content,
-                create_at: Some(chrono::Utc::now().naive_local()),
-            }
+impl<'a> NewArticleContentModel<'a> {
+    pub fn new(content_id: &'a str, article_id: &'a str, content: &'a str) -> Self {
+        Self {
+            id: content_id,
+            status: ARTICLE_STATUS_NEW,
+            article_id,
+            content,
+            create_at: Some(chrono::Utc::now().naive_local()),
+        }
     }
 }

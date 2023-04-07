@@ -1,11 +1,11 @@
 #![allow(clippy::type_complexity)]
-use std::future::{ready, Ready};
-use actix_web::dev::{ServiceRequest, ServiceResponse};
 use actix_session::SessionExt;
 use actix_web::body::EitherBody;
+use actix_web::dev::{ServiceRequest, ServiceResponse};
+use std::future::{ready, Ready};
 
-use futures_util::future::LocalBoxFuture;
 use actix_web::{dev, dev::Service, dev::Transform, Error, HttpResponse};
+use futures_util::future::LocalBoxFuture;
 
 use log::info;
 
@@ -27,13 +27,11 @@ where
     dev::forward_ready!(service);
 
     fn call(&self, req: ServiceRequest) -> Self::Future {
-        
         let path = req.path().to_string();
         info!("path:{}", path);
         if path.find("/admin").is_some()
             && web_util::get_username_from_session(&req.get_session()).is_none()
         {
-            
             let (request, _pl) = req.into_parts();
             let response = HttpResponse::Found()
                 .insert_header((http::header::LOCATION, "/login"))
@@ -41,13 +39,12 @@ where
                 // constructed responses map to "right" body
                 .map_into_right_body();
 
-            Box::pin(async {Ok(ServiceResponse::new(request, response))})
+            Box::pin(async { Ok(ServiceResponse::new(request, response)) })
             //Ok(req.into_response(actix_web::error::ErrorNetworkAuthenticationRequired("Unauthenticated")))
         } else {
             let res = self.service.call(req);
-            Box::pin(async move {res.await.map(ServiceResponse::map_into_left_body)})
+            Box::pin(async move { res.await.map(ServiceResponse::map_into_left_body) })
         }
-        
     }
 }
 
@@ -60,7 +57,6 @@ where
     S::Future: 'static,
     B: 'static,
 {
-    
     type Response = ServiceResponse<EitherBody<B>>;
     type Error = Error;
     type InitError = ();
@@ -68,10 +64,6 @@ where
     //type Future = Ready<Result<Self::Transform, Self::InitError>>;
     type Future = Ready<Result<Self::Transform, Self::InitError>>;
     fn new_transform(&self, service: S) -> Self::Future {
-        ready(Ok(AuthMiddleware {
-            service,
-        }))
+        ready(Ok(AuthMiddleware { service }))
     }
 }
-
-

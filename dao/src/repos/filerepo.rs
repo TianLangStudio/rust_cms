@@ -7,7 +7,10 @@ use crate::schema::tb_file;
 use common::db_util;
 pub type DbConnection = db_util::DbConnection;
 
-pub fn add_file(conn: &mut db_util::PooledConnection, new_file: &NewFileMod) -> Result<usize, Error> {
+pub fn add_file(
+    conn: &mut db_util::PooledConnection,
+    new_file: &NewFileMod,
+) -> Result<usize, Error> {
     diesel::insert_into(tb_file::table)
         .values(new_file)
         .execute(conn)

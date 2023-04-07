@@ -1,7 +1,10 @@
 [workspace]
 
 members = [
+# common for some functions to share
     "common",
+# dao for interacting with the database
     "dao",
+# web for interatiing with human
     "web"
 ]

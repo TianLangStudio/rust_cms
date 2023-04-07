@@ -2,8 +2,8 @@ use actix_session::Session;
 use actix_web::{get, post, web, HttpResponse, Responder};
 use diesel::r2d2::{self, ConnectionManager};
 
-use log::{info, warn};
 use common::db_util;
+use log::{info, warn};
 
 use super::web_util;
 use common::result::AjaxResult;
@@ -20,7 +20,10 @@ pub(crate) async fn admin_test(session: Session) -> impl Responder {
     format!("Hello, {}", username)
 }
 #[post("/api/register")]
-pub(crate) async fn register(pool: web::Data<Pool>, login_info: web::Json<LoginInfo>) -> impl Responder {
+pub(crate) async fn register(
+    pool: web::Data<Pool>,
+    login_info: web::Json<LoginInfo>,
+) -> impl Responder {
     let new_login_info = NewLoginInfo {
         username: &login_info.username,
         password: &login_info.password,
@@ -61,11 +64,8 @@ pub(crate) async fn login(
         _ => {
             info!("{} login now", login_info.username);
             let mut conn = db_util::get_conn(&pool).unwrap();
-            match userrepo::valid_login_info(
-                &mut conn,
-                &login_info.username,
-                &login_info.password,
-            ) {
+            match userrepo::valid_login_info(&mut conn, &login_info.username, &login_info.password)
+            {
                 true => {
                     let user_key_sign = blake2_sign(&login_info.username);
                     session

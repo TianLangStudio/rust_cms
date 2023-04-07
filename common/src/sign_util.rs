@@ -1,5 +1,5 @@
 use super::config_util;
-use blake2::{Blake2b, Blake2s256, Digest, digest::Update};
+use blake2::{digest::Update, Blake2b, Blake2s256, Digest};
 use data_encoding::BASE64;
 
 fn get_salt() -> String {

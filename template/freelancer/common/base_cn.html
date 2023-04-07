@@ -19,17 +19,17 @@
     <body id="page-top">
         {% block nav %}
         <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
-            <div class="container"><a class="navbar-brand js-scroll-trigger" href="#page-top">TianLangStudio</a>
+            <div class="container"><a class="navbar-brand js-scroll-trigger" href="#page-top">天朗工作室</a>
                 <button class="navbar-toggler navbar-toggler-right font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu <i class="fas fa-bars"></i></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/">Index</a>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/">首页</a>
                         </li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/#portfolio">Blog</a>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/#portfolio">博客</a>
                         </li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/#about">Who am I</a>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/#about">我是谁</a>
                         </li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/#contact">Contact</a>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/#contact">联系俺</a>
                         </li>
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -43,20 +43,20 @@
                           <div  id="user-dropdown-list" class="dropdown-menu dropdown-menu-right shadow animated--grow-in  bg-primary text-white" aria-labelledby="userDropdown">
                             <a class="dropdown-item login"  href="/article/admin/edit/add" target="_blank">
                                 <i class="fas fa-edit  fa-sm mr-2 text-gray-400"></i>
-                                Write Blog
+                                写博客
                             </a>
-                            <a class="dropdown-item login"  href="/article/admin/under_review" target="_blank">
-                                <i class="fas fa-file-check fa-sm mr-2 text-gray-400"></i>
-                                Under Review Blogs
-                            </a>
+                              <a class="dropdown-item login"  href="/article/admin/under_review" target="_blank">
+                                  <i class="fas fa-edit  fa-sm mr-2 text-gray-400"></i>
+                                  审核
+                              </a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item login" id="tl-btn-logout"  data-toggle="modal" data-target="#logoutModal" href="#">
                               <i class="fas fa-sign-out-alt fa-sm mr-2 text-gray-400"></i>
-                              Logout
+                              退出
                             </a>
                             <a class="dropdown-item logout" id="tl-btn-login" href="#" data-toggle="modal" data-target="#loginModal">
-                               <i class="fas sign-in-altfa-sm  mr-2 text-gray-400"></i>
-                               Login
+                                <i class="fas sign-in-altfa-sm  mr-2 text-gray-400"></i>
+                                登录
                               </a>
                           </div>
                         </li>
@@ -71,7 +71,7 @@
             <div class="container d-flex align-items-right flex-column">
                 <!-- Masthead Avatar Image--><!--img class="masthead-avatar mb-5" src="/static/tmpl/freelancer/assets/img/avataaars.svg" alt=""-->
                 <!-- Masthead Heading-->
-                <h5 class="masthead-heading mb-0">Fusion Zhu@TianLang Studio</h5>
+                <h5 class="masthead-heading mb-0">朱焕青@天朗工作室 </h5>
                 <!-- Icon Divider-->
                 <div class="divider-custom divider-light">
                     <div class="divider-custom-line"></div>
@@ -79,7 +79,7 @@
                     <div class="divider-custom-line"></div>
                 </div>
                 <!-- Masthead Subheading-->
-                <p class="pre-wrap masthead-subheading font-weight-light mb-0">A Curious Programmer </p>
+                <p class="pre-wrap masthead-subheading font-weight-light mb-0">一个不安分的程序员 </p>
             </div>
         </header>
         {% endblock content_header %}
@@ -87,7 +87,7 @@
             <div class="container">
                 <!-- Portfolio Section Heading-->
                 <div class="text-center">
-                    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">Blog</h2>
+                    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">博客</h2>
                 </div>
                 <!-- Icon Divider-->
                 <div class="divider-custom">
@@ -112,7 +112,7 @@
             <div class="container">
                 <!-- About Section Heading-->
                 <div class="text-center">
-                    <h2 class="page-section-heading d-inline-block text-white">Who am I</h2>
+                    <h2 class="page-section-heading d-inline-block text-white">谁是我 </h2>
                 </div>
                 <!-- Icon Divider-->
                 <div class="divider-custom divider-light">
@@ -123,10 +123,10 @@
                 <!-- About Section Content-->
                 <div class="row">
                     <div class="col-lg-4 ml-auto">
-                        <p class="pre-wrap lead">Programming is a hands-on art</p>
+                        <p class="pre-wrap lead">编程是需要动手的艺术</p>
                     </div>
                     <div class="col-lg-4 mr-auto">
-                        <p class="pre-wrap lead">Willing to be a clear stream in the technical community, so that technology can help more people</p>
+                        <p class="pre-wrap lead">愿做技术社区的一股清流，让技术帮助更多的人</p>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
             <div class="container">
                 <!-- Contact Section Heading-->
                 <div class="text-center">
-                    <h2 class="page-section-heading text-secondary d-inline-block mb-0">Contract </h2>
+                    <h2 class="page-section-heading text-secondary d-inline-block mb-0">联系俺 </h2>
                 </div>
                 <!-- Icon Divider-->
                 <div class="divider-custom">
@@ -159,27 +159,30 @@
                 <div class="row">
                     <!-- Footer Location-->
                     <div class="col-lg-4 mb-5 mb-lg-0">
-                        <h4 class="mb-4">Where am I</h4>
-                        <p class="pre-wrap lead mb-0">ShenZhen China</p>
+                        <h4 class="mb-4">俺在哪里</h4>
+                        <p class="pre-wrap lead mb-0">在深圳嘞河南人</p>
                     </div>
                     <!-- Footer Social Icons-->
                     <div class="col-lg-4 mb-5 mb-lg-0">
-                        <h4 class="mb-4">More</h4>
-                        <a class="btn btn-outline-light btn-social mx-1" target="_blank" href="https://github.com/TianLangStudio/">
-                            GitHub
-                        </a>
-                        <a class="btn btn-outline-light btn-social mx-1" target="_blank" href="https://www.upwork.com/freelancers/huanqingzhu">
-                            Upwork
-                        </a>
+                        <h4 class="mb-4">多看看俺</h4>
                         <a class="btn btn-outline-light btn-social mx-1" target="_blank" href="https://edu.51cto.com/sd/aca72">
                                51cto
+                        </a>
+                        <a class="btn btn-outline-light btn-social mx-1" target="_blank" href="https://pan.baidu.com/mall/home/shop?sid=359684">
+                                baidu
+                        </a>
+                     <a class="btn btn-outline-light btn-social mx-1" target="_blank" href="https://www.iqiyi.com/u/1826995037/feeds">
+                                iqiyi
+                        </a>
+                        <a class="btn btn-outline-light btn-social mx-1" target="_blank" href="https://github.com/TianLangStudio/">
+                                github
                         </a>
                 
                     </div>
                     <!-- Footer About Text-->
                     <div class="col-lg-4">
-                        <h4 class="mb-4">Attention!</h4>
-                        <p class="pre-wrap lead mb-0">This website is used for functional (teaching) demonstration, data is deleted from time to time, availability is not guaranteed</p>
+                        <h4 class="mb-4">可别怪俺</h4>
+                        <p class="pre-wrap lead mb-0">此网站用于功能（教学）演示，数据定期删除，不保证可用性</p>
                     </div>
                 </div>
             </div>
@@ -192,8 +195,8 @@
         <section class="copyright py-4 text-center text-white">
             <div class="container">
                 <small class="pre-wrap">
-                    Developed with <a href="https://edu.51cto.com/sd/eed8c" target="_blank">Rust</a>, Open source on <a href="https://github.com/TianLangStudio/rust_cms"  target="_blank">Github</a>上<br/>
-                    Server provided by <a href="https://www.aliyun.com/minisite/goods?userCode=qtg5vupa" target="_blank">Ali Cloud</a><br/>
+                    本网站采用<a href="https://edu.51cto.com/sd/eed8c" target="_blank">Rust语言</a>开发,源码在<a href="https://github.com/TianLangStudio/rust_cms"  target="_blank">Github</a>上<br/>
+                    服务器由<a href="https://www.aliyun.com/minisite/goods?userCode=qtg5vupa" target="_blank">阿里云</a>提供<br/>                     
                      Copyright ©2020-2030 <br/>
                      <div style="width:300px;margin:0 auto; padding:20px 0;">
                         <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44030702003166" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="/static/img/beian.png" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">粤公网安备 44030702003166号</p></a>
@@ -220,17 +223,17 @@
                                     <div class="col-lg-6">
                                     <div class="p-5">
                                         <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">欢迎回来</h1>
                                         </div>
                                         <form class="user">
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"  value="zhangsan" id="tl-login-username-ipt" aria-describedby="emailHelp" placeholder="Login name, please.">
+                                            <input type="email" class="form-control form-control-user"  value="zhangsan" id="tl-login-username-ipt" aria-describedby="emailHelp" placeholder="请输入登录用户名">
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user"  value="123456" id="tl-login-password-ipt" placeholder="Password">
+                                            <input type="password" class="form-control form-control-user"  value="123456" id="tl-login-password-ipt" placeholder="密码">
                                         </div>
                                         <div class="btn btn-primary login-btn">
-                                            Login
+                                            登录
                                         </div>
                                         </form>
                                     </div>
@@ -250,8 +253,8 @@
                 <div class="modal-content">
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
                                         <!-- Outer Row -->
-                    <div class="text-left">Do you want to Logout？</div>
-                    <div class="btn btn-danger float-right logout-btn">Logout</div>
+                    <div class="text-left">确定退出登录？</div>                   
+                    <div class="btn btn-danger float-right logout-btn">退出登录</div>
                 </div>
             </div>
         </div>

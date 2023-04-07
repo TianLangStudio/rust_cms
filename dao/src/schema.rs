@@ -41,9 +41,4 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(
-    tb_article,
-    tb_article_content,
-    tb_file,
-    tb_login_info,
-);
+allow_tables_to_appear_in_same_query!(tb_article, tb_article_content, tb_file, tb_login_info,);

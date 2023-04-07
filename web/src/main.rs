@@ -1,11 +1,11 @@
-use std::fs::File;
-use std::io::BufReader;
 use actix_files as fs;
-use actix_session::{SessionMiddleware, storage::CookieSessionStore};
+use actix_session::{storage::CookieSessionStore, SessionMiddleware};
 use actix_web::cookie::Key;
 use actix_web::{web, App, HttpServer};
 use rustls::{Certificate, PrivateKey, ServerConfig};
 use rustls_pemfile::{certs, pkcs8_private_keys};
+use std::fs::File;
+use std::io::BufReader;
 
 use log::*;
 
@@ -20,7 +20,7 @@ mod middleware;
 mod userctrl;
 mod web_util;
 
-#[actix_web::main] 
+#[actix_web::main]
 async fn main() -> std::io::Result<()> {
     log_util::init();
     info!("app starting");
@@ -50,7 +50,10 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(tera))
             .app_data(web::Data::new(db_util::POOL.clone())) //绑定数据库链接池
             .wrap(middleware::AuthService) //添加根据Session验证登录状态的中间件
-            .wrap(SessionMiddleware::new(CookieSessionStore::default(), secret_key.clone()))
+            .wrap(SessionMiddleware::new(
+                CookieSessionStore::default(),
+                secret_key.clone(),
+            ))
             .service(filectrl::upload) //文件上传api
             .service(filectrl::view_file) //使用ID查看文件
             .service(userctrl::login) //用户登录接口
@@ -83,7 +86,6 @@ async fn main() -> std::io::Result<()> {
         server.bind(&host_port)?.run().await
     }
 }
-
 
 fn load_rustls_config() -> rustls::ServerConfig {
     // init server config builder with safe defaults

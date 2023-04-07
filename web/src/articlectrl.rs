@@ -1,24 +1,23 @@
 use actix_session::Session;
-use actix_web::{error, get, post, web, Error, Responder, HttpResponse};
 use actix_web::web::Redirect;
+use actix_web::{error, get, post, web, Error, HttpResponse, Responder};
 use diesel::r2d2::{self, ConnectionManager};
 use serde::{Deserialize, Serialize};
 use tera::{self, Tera};
 
 use log::{error, info};
 
-use common::{db_util, config_util, result};
+use common::{config_util, db_util, result};
 
 use super::web_util;
 use dao::{models::articlemod::*, repos::articlerepo};
-
 
 pub type DbConnection = articlerepo::DbConnection;
 pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 
 #[derive(Deserialize, Serialize)]
 pub struct PublishParams {
-    article_id:  String,
+    article_id: String,
     content_id: String,
 }
 
@@ -53,13 +52,13 @@ pub(crate) async fn admin_save_article(
                 HttpResponse::Forbidden().json(result::AjaxResult::<bool>::fail(err.to_string()))
             }
         }
-
-    } else {//edit article
+    } else {
+        //edit article
         match articlerepo::edit_article(&mut conn, edit_article.0) {
             Ok((article_id, content_id_opt)) => {
                 let ids = PublishParams {
                     article_id,
-                    content_id: content_id_opt.unwrap_or("".to_string())
+                    content_id: content_id_opt.unwrap_or("".to_string()),
                 };
                 HttpResponse::Ok().json(result::AjaxResult::<PublishParams>::success_with_single(
                     ids,
@@ -98,21 +97,22 @@ pub(crate) async fn admin_publish_article(
 
     //we should set the status of article as under review if need approval before publish
     if config_util::need_approval() {
-       articlerepo::submit_review(article_id, content_id, &mut conn)
-           .map_err(|e|error::ErrorInternalServerError(e))?;
+        articlerepo::submit_review(article_id, content_id, &mut conn)
+            .map_err(|e| error::ErrorInternalServerError(e))?;
     } else {
         articlerepo::publish_article(article_id, content_id, &mut conn)
-            .map_err(|e|error::ErrorInternalServerError(e))?;
+            .map_err(|e| error::ErrorInternalServerError(e))?;
     }
 
     Ok(result::ok_without_data())
 }
 
 #[post("/api/article/admin/approve/{is_approved}")]
-async fn admin_approve( pool: web::Data<Pool>,
-                        params: web::Json<PublishParams>,
-                        path_params: web::Path<(bool,)>,
-                        session: Session,
+async fn admin_approve(
+    pool: web::Data<Pool>,
+    params: web::Json<PublishParams>,
+    path_params: web::Path<(bool,)>,
+    session: Session,
 ) -> Result<HttpResponse, Error> {
     let username = web_util::get_username_from_session(&session)
         .ok_or(error::ErrorNetworkAuthenticationRequired("login first"))?;
@@ -123,15 +123,14 @@ async fn admin_approve( pool: web::Data<Pool>,
     let article_id = &params.article_id;
     let content_id = &params.content_id;
 
-    let (is_approve, ) = path_params.into_inner();
+    let (is_approve,) = path_params.into_inner();
     let mut conn = web_util::get_conn_or_busy_error(&pool)?;
     if is_approve {
         articlerepo::publish_article(article_id, content_id, &mut conn)
-            .map_err(|e|error::ErrorInternalServerError(e))?;
-    }else {
+            .map_err(|e| error::ErrorInternalServerError(e))?;
+    } else {
         articlerepo::reject_review(article_id, content_id, &mut conn)
-            .map_err(|e|error::ErrorInternalServerError(e))?;
-
+            .map_err(|e| error::ErrorInternalServerError(e))?;
     }
     Ok(result::ok_without_data())
 }
@@ -140,7 +139,7 @@ fn view_articles_by_status(
     query_param: web::Query<web_util::Page>,
     session: Session,
     tmpl: web::Data<Tera>,
-) -> Result<HttpResponse, Error>  {
+) -> Result<HttpResponse, Error> {
     let query_param = query_param.0;
     let page_no = query_param.page_no.unwrap_or(1);
     let page_size = query_param.page_size.unwrap_or(7);
@@ -177,14 +176,11 @@ pub(crate) async fn view_articles(
     view_articles_by_status(ARTICLE_STATUS_PUBLISHED, query_param, session, tmpl)
 }
 #[get("/view/article/{article_id}")]
-pub(crate) async fn view_article_by_id(
-    path_params: web::Path<(String,)>,
-) -> impl Responder {
-    let (article_id, ) = path_params.into_inner();
+pub(crate) async fn view_article_by_id(path_params: web::Path<(String,)>) -> impl Responder {
+    let (article_id,) = path_params.into_inner();
     let status = ARTICLE_STATUS_PUBLISHED;
     let url = format!("/view/article/{article_id}/{status}");
     Redirect::to(url).permanent()
-
 }
 
 #[get("/view/article/{article_id}/{status}")]
@@ -206,14 +202,14 @@ pub(crate) async fn view_article_by_id_and_status(
     let article_info = articlerepo::find_article_by_id(&mut conn, &article_id);
     let article_info = match article_info {
         Ok(article_info) => article_info,
-        _ => {
-            return Ok(result::server_busy_error())
-        }
+        _ => return Ok(result::server_busy_error()),
     };
 
-    let article_content = articlerepo::find_article_content_by_id_and_status(&mut conn,
-                                                                             &article_id,
-                                                                             &article_status_opt);
+    let article_content = articlerepo::find_article_content_by_id_and_status(
+        &mut conn,
+        &article_id,
+        &article_status_opt,
+    );
     let article_content = match article_content {
         Ok(article_content) => article_content,
         _ => {
@@ -222,7 +218,6 @@ pub(crate) async fn view_article_by_id_and_status(
             )))
         }
     };
-
 
     render_context.insert("article_info", &article_info);
     render_context.insert("article_content", &article_content);
@@ -240,7 +235,7 @@ pub(crate) async fn admin_edit_view(
     session: Session,
     pool: web::Data<Pool>,
     tmpl: web::Data<Tera>,
-) -> Result<impl Responder, Error>{
+) -> Result<impl Responder, Error> {
     let path_params = path_params.into_inner();
     let tmpl_name = web_util::get_tmpl_from_session(&session) + "/admin/article/edit.html";
     let mut ctx = tera::Context::new();
@@ -257,7 +252,11 @@ pub(crate) async fn admin_edit_view(
             Ok(article) if article.creater == username => {
                 ctx.insert("article", &article);
                 let article_status = Some(ARTICLE_STATUS_PUBLISHED);
-                match articlerepo::find_article_content_by_id_and_status(&mut conn, article_id, &article_status) {
+                match articlerepo::find_article_content_by_id_and_status(
+                    &mut conn,
+                    article_id,
+                    &article_status,
+                ) {
                     Ok(article_content) => {
                         ctx.insert("article_content", &article_content.get_content())
                     }
@@ -277,11 +276,10 @@ pub(crate) async fn admin_edit_view(
 }
 
 #[get("/article/admin/under_review")]
-async fn admin_under_review( query_param: web::Query<web_util::Page>,
-                             session: Session,
-                             tmpl: web::Data<Tera>,
+async fn admin_under_review(
+    query_param: web::Query<web_util::Page>,
+    session: Session,
+    tmpl: web::Data<Tera>,
 ) -> Result<HttpResponse, Error> {
     view_articles_by_status(ARTICLE_STATUS_UNDER_REVIEW, query_param, session, tmpl)
 }
-
-

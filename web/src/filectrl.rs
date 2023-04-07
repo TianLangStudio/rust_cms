@@ -3,7 +3,7 @@ use std::path::Path;
 use actix_files as fs;
 use actix_multipart::{Field, Multipart};
 use actix_session::Session;
-use actix_web::{get, post, web, Either, Error, HttpResponse, Result, error};
+use actix_web::{error, get, post, web, Either, Error, HttpResponse, Result};
 //use actix_http::{body::BoxBody, Response};
 //use http::StatusCode;
 use async_std::fs::File;
@@ -25,7 +25,11 @@ pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 type UploadReslut = Either<HttpResponse, Result<HttpResponse, Error>>;
 
 #[post("/api/file/admin/upload")]
-pub(crate) async fn upload(mut multipart: Multipart, session: Session, pool: web::Data<Pool>) -> UploadReslut {
+pub(crate) async fn upload(
+    mut multipart: Multipart,
+    session: Session,
+    pool: web::Data<Pool>,
+) -> UploadReslut {
     let username = match web_util::get_username_from_session(&session) {
         Some(usernaem) => usernaem,
         None => return Either::Left(result::forbidden_with_errmsg(String::from("请先登录"))),
@@ -96,10 +100,10 @@ async fn save_file(
     let mut file = File::create(file_path).await?;
     let mut length = 0;
     let content_disposition = field.content_disposition();
-    
+
     let upload_file_name = content_disposition.get_filename().unwrap_or("").to_string();
     let upload_file_ext = upload_file_name.split(".").last().unwrap_or("").to_string();
-    
+
     while let Some(bytes) = field.next().await {
         let bytes = bytes?;
         length += bytes.len();
