@@ -1,4 +1,3 @@
-use lazy_static::lazy_static;
 use log::{debug, error, info, trace, warn};
 use log4rs;
 

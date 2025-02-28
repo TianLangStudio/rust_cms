@@ -3,7 +3,7 @@ use blake2::{digest::Update, Blake2b, Blake2s256, Digest};
 use data_encoding::BASE64;
 
 fn get_salt() -> String {
-    config_util::APP_CONFIG
+    config_util::get_app_config()
         .get_string("tl.app.sign.salt")
         .expect("tl.app.sign.salt is required")
 }

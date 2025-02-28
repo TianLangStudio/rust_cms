@@ -1,29 +1,30 @@
+use std::sync::OnceLock;
 use std::time::Duration;
 
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
-use lazy_static::lazy_static;
 use log::info;
-
-use super::config_util;
+use crate::config_util::get_app_config;
 
 pub type DbConnection = MysqlConnection;
 pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 pub type PooledConnection = r2d2::PooledConnection<ConnectionManager<DbConnection>>;
-
-lazy_static! {
-    pub static ref POOL: Pool = {
-        info!("db pool init");
-        let connspec = config_util::APP_CONFIG
-            .get_string("tl.app.db.url")
-            .expect("db url is required");
-        let manager = ConnectionManager::<DbConnection>::new(connspec);
-        r2d2::Pool::builder()
-            .build(manager)
-            .expect("Failed to create pool.")
-    };
+// Define the static POOL with OnceLock
+static POOL: OnceLock<Pool> = OnceLock::new();
+// Usage example (you’d call this wherever POOL is accessed)
+pub fn get_pool() -> &'static Pool {
+    POOL.get_or_init(|| init_pool())
 }
-
+fn init_pool() -> Pool {
+    info!("db pool init");
+    let conn_url = get_app_config()
+        .get_string("tl.app.db.url")
+        .expect("db url is required");
+    let manager = ConnectionManager::<DbConnection>::new(conn_url);
+    r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create pool.")
+}
 pub fn get_conn(pool: &Pool) -> Option<PooledConnection> {
     match pool.get_timeout(Duration::new(10, 0)) {
         Ok(conn) => Some(conn),
