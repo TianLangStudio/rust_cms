@@ -6,7 +6,7 @@ use rustls::{Certificate, PrivateKey, ServerConfig};
 use rustls_pemfile::{certs, pkcs8_private_keys};
 use std::fs::File;
 use std::io::BufReader;
-
+use actix_web::web::redirect;
 use log::*;
 
 use tera::Tera;
@@ -70,6 +70,7 @@ async fn main() -> std::io::Result<()> {
             .service(fs::Files::new("/static", "static").show_files_listing()) //静态文件
             .service(indexctrl::favicon) //favicon
             .service(indexctrl::index) //首页
+            .service(redirect("/ads.txt", "/static/ads.txt"))
     });
 
     if is_prod {
