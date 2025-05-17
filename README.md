@@ -1,6 +1,6 @@
 ![Rust CMS](./doc/imgs/rust_cms_screenshot_en.png)  
 
-[Demo](https://www.tianlang.tech) run on [Ali Cloud](https://www.aliyun.com/minisite/goods?userCode=qtg5vupa)
+[Demo](https://www.tianlang.tech) run on [Cloudflare](https://www.cloudflare.com/)
 
 ⚠Don't use it in production!!!. It is a project for learning. 
 

@@ -1,6 +1,6 @@
 ![Rust CMS](./doc/imgs/screenshot.png)  
 
-[演示网站](https://www.tianlang.tech) 运行在 [阿里云上](https://www.aliyun.com/minisite/goods?userCode=qtg5vupa)
+[演示网站](https://www.tianlang.tech) 运行在 [Cloudflare](https://www.cloudflare.com/)
 
 ⚠这是个学习用项目，不要直接用于生产  
 [English](./README.md)|中文
