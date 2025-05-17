@@ -6,7 +6,7 @@ use rustls::{Certificate, PrivateKey, ServerConfig};
 use rustls_pemfile::{certs, pkcs8_private_keys};
 use std::fs::File;
 use std::io::BufReader;
-
+use actix_web::web::redirect;
 use log::*;
 
 use tera::Tera;
@@ -38,17 +38,17 @@ async fn main() -> std::io::Result<()> {
 
         tera.register_function(
             "list_new_articles",
-            funs::article::make_list_new_articles(db_util::POOL.clone()),
+            funs::article::make_list_new_articles(db_util::get_pool().clone()),
         );
         tera.register_function(
             "list_recommend_articles",
-            funs::article::make_list_recommend_articles(db_util::POOL.clone()),
+            funs::article::make_list_recommend_articles(db_util::get_pool().clone()),
         );
         //  tera.full_reload();
 
         App::new()
             .app_data(web::Data::new(tera))
-            .app_data(web::Data::new(db_util::POOL.clone())) //绑定数据库链接池
+            .app_data(web::Data::new(db_util::get_pool().clone())) //绑定数据库链接池
             .wrap(middleware::AuthService) //添加根据Session验证登录状态的中间件
             .wrap(SessionMiddleware::new(
                 CookieSessionStore::default(),
@@ -70,16 +70,17 @@ async fn main() -> std::io::Result<()> {
             .service(fs::Files::new("/static", "static").show_files_listing()) //静态文件
             .service(indexctrl::favicon) //favicon
             .service(indexctrl::index) //首页
+            .service(redirect("/ads.txt", "/static/ads.txt"))
     });
 
     if is_prod {
         let config = load_rustls_config();
         server.bind_rustls("127.0.0.1:8443", config)?.run().await
     } else {
-        let port = config_util::APP_CONFIG
+        let port = config_util::get_app_config()
             .get_string("tl.app.http.port")
             .expect("port is required");
-        let host = config_util::APP_CONFIG
+        let host = config_util::get_app_config()
             .get_string("tl.app.http.host")
             .expect("host is required");
         let host_port = host + ":" + &port;

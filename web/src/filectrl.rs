@@ -10,7 +10,6 @@ use async_std::fs::File;
 use diesel::r2d2::{self, ConnectionManager};
 
 use futures::{AsyncWriteExt, StreamExt};
-use lazy_static::lazy_static;
 
 use log::{error, info};
 
@@ -37,7 +36,7 @@ pub(crate) async fn upload(
 
     let mut file_ids: Vec<String> = Vec::new();
     while let Some(Ok(field)) = multipart.next().await {
-        let path = &*FILE_SAVE_PATH;
+        let path = &get_file_save_path();
         match save_file(field, path, &username, &pool).await {
             Ok(file_id) => file_ids.push(file_id),
             Err(err) => return Either::Right(Err(err)),
@@ -55,7 +54,8 @@ pub(crate) async fn upload(
 pub(crate) async fn view_file(path_params: web::Path<(String,)>) -> Result<fs::NamedFile> {
     let path_params = path_params.into_inner();
     let file_id = &path_params.0;
-    let path = Path::new(&*FILE_SAVE_PATH);
+    let save_path = get_file_save_path();
+    let path = Path::new(&save_path);
     //todo 判断是否是私有文件
     Ok(fs::NamedFile::open(path.join(file_id))?)
 }
@@ -63,29 +63,27 @@ fn success_with_file_ids(file_ids: Vec<String>) -> HttpResponse {
     HttpResponse::Ok().json(result::AjaxResult::success(Some(file_ids)))
 }
 fn get_file_save_path() -> String {
-    let path = match config_util::APP_CONFIG.get_string("tl.app.upload.path") {
-        Ok(path) => path,
-        Err(_) => String::from("upload"),
-    };
+    let path = config_util::get_app_config()
+        .get_string("tl.app.upload.path")
+        .unwrap_or_else(|_| String::from("upload"));
     match std::fs::create_dir_all(&path) {
         Ok(_) => info!(" app upload path:{}", &path),
-        Err(_) => error!("error create app uplod path: {}", &path),
+        Err(_) => error!("error create app upload path: {}", &path),
     }
     path
 }
 
 fn get_file_max_size_bytes() -> usize {
-    let max_size_mb = match config_util::APP_CONFIG.get_float("tl.app.upload.max_size") {
-        Ok(size_mb) => size_mb,
-        Err(_) => 1.0,
-    };
+    let max_size_mb = config_util::get_app_config()
+        .get_float("tl.app.upload.max_size")
+        .unwrap_or_else(|_| 1.0);
     (max_size_mb * 1024.0 * 1024.0) as usize
 }
 
-lazy_static! {
-    static ref FILE_SAVE_PATH: String = get_file_save_path();
-    static ref FILE_MAX_SIZE: usize = get_file_max_size_bytes();
-}
+/*lazy_static! {
+    //static ref FILE_SAVE_PATH: String = get_file_save_path();
+    //static ref FILE_MAX_SIZE: usize = get_file_max_size_bytes();
+}*/
 
 //保存文件
 async fn save_file(
@@ -107,7 +105,7 @@ async fn save_file(
     while let Some(bytes) = field.next().await {
         let bytes = bytes?;
         length += bytes.len();
-        if length > *FILE_MAX_SIZE {
+        if length > get_file_max_size_bytes() {
             error!("err:{}", "上传的文件过大");
             return Err(error::ErrorInternalServerError("上传的文件过大"));
             //return Err(Error::from(Response::new(StatusCode::INTERNAL_SERVER_ERROR).set_body(BoxBody::new("上传的文件过大"))));

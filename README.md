@@ -57,4 +57,4 @@ You could use a exists MySql database, installing **[Rust](https://www.rust-lang
    install mysqlclient then build again ex. install mysqlclient in Ubuntu  
    >  sudo apt-get install libmysqlclient-dev 
 
-Contact [FusionZhu](https://www.upwork.com/freelancers/huanqingzhu) for more help 
+Contact [FusionZhu](https://www.upwork.com/fl/huanqingzhu?mp_source=share) for more help 
