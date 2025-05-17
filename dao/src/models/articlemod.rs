@@ -130,7 +130,7 @@ pub struct ArticleContentModel {
 impl ArticleContentModel {
     pub fn get_content(&self) -> &str {
         match &self.content {
-            Some(cnt) => &cnt,
+            Some(cnt) => cnt,
             None => "",
         }
     }

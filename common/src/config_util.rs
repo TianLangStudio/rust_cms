@@ -23,21 +23,15 @@ fn init_app_config() -> Config {
         .unwrap()
 }
 pub fn is_prod() -> bool {
-    match get_app_config().get_string("tl.app.mode") {
-        Ok(value) if value == "prod" => true,
-        _ => false,
-    }
+    matches!(get_app_config().get_string("tl.app.mode"), Ok(val) if val == "prod")
 }
 
 pub fn need_approval() -> bool {
-    match get_app_config().get_bool("tl.app.approval.enable") {
-        Ok(value) => true,
-        _ => false,
-    }
+    matches!(get_app_config().get_bool("tl.app.approval.enable"), Ok(val))
 }
 
 //set
-pub fn is_approver(username: &str) -> bool {
+pub fn is_approve_user(username: &str) -> bool {
     match get_app_config().get_string("tl.app.approval.users") {
         Ok(values) => values.split(",").any(|v| v == username),
         _ => false,

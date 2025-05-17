@@ -21,7 +21,7 @@ pub fn add_article(
         let id: String = db_util::uuid();
         let content = &new_article.content;
         let subtitle = match &new_article.subtitle {
-            Some(subtitle) => &subtitle,
+            Some(subtitle) => subtitle,
             None => "",
         };
         let new_article_model = ArticleModel {
@@ -44,7 +44,7 @@ pub fn add_article(
                 id: &new_article_model.id,
                 status: ARTICLE_STATUS_NEW,
                 article_id: &new_article_model.id,
-                content: &content.as_ref().unwrap(),
+                content: content.as_ref().unwrap(),
                 create_at: Some(chrono::Utc::now().naive_local()),
             };
             save_article_content(conn, &new_article_content)?;
@@ -63,11 +63,11 @@ pub fn edit_article(
             let content_id = db_util::uuid();
             let new_article_content = NewArticleContentModel::new(
                 &content_id,
-                &edit_article.id.as_ref().unwrap(),
-                &content,
+                edit_article.id.as_ref().unwrap(),
+                content,
             );
             save_article_content(conn, &new_article_content);
-            remove_article_content(conn, 6, &edit_article.id.as_ref().unwrap());
+            remove_article_content(conn, 6, edit_article.id.as_ref().unwrap());
             content_id_opt = Some(content_id);
         }
         edit_article_info(conn, &edit_article)?;
@@ -84,7 +84,7 @@ pub fn edit_article_info(
         title: edit_article.title.clone(),
         subtitle: edit_article.subtitle.clone(),
         intro: edit_article.intro.clone(),
-        rcmd_weight: edit_article.rcmd_weight.clone(),
+        rcmd_weight: edit_article.rcmd_weight,
         url: edit_article.url.clone(),
         //status: edit_article.status.clone(),
         status: Some(ARTICLE_STATUS_NEW), //we should set article's status as new while editing
@@ -183,7 +183,6 @@ pub fn save_article_content(
  *
  * 保留最近的saved条记录，其它 的删除
  * **/
-
 pub fn remove_article_content(
     conn: &mut DbConnection,
     saved: i64,
@@ -198,7 +197,7 @@ pub fn remove_article_content(
         .load::<ArticleContentModel>(conn);
 
     match filter {
-        Ok(article_contents) if article_contents.len() > 0 => {
+        Ok(article_contents) if !article_contents.is_empty() => {
             let removed: Vec<String> = article_contents
                 .iter()
                 .map(|article| article.id.clone())

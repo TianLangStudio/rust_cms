@@ -13,7 +13,7 @@ pub type PooledConnection = r2d2::PooledConnection<ConnectionManager<DbConnectio
 static POOL: OnceLock<Pool> = OnceLock::new();
 // Usage example (you’d call this wherever POOL is accessed)
 pub fn get_pool() -> &'static Pool {
-    POOL.get_or_init(|| init_pool())
+    POOL.get_or_init(init_pool)
 }
 fn init_pool() -> Pool {
     info!("db pool init");
@@ -26,10 +26,7 @@ fn init_pool() -> Pool {
         .expect("Failed to create pool.")
 }
 pub fn get_conn(pool: &Pool) -> Option<PooledConnection> {
-    match pool.get_timeout(Duration::new(10, 0)) {
-        Ok(conn) => Some(conn),
-        Err(err) => None,
-    }
+    pool.get_timeout(Duration::new(10, 0)).ok()
 }
 
 pub fn uuid() -> String {

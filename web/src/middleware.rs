@@ -29,7 +29,7 @@ where
     fn call(&self, req: ServiceRequest) -> Self::Future {
         let path = req.path().to_string();
         info!("path:{}", path);
-        if path.find("/admin").is_some()
+        if path.contains("/admin")
             && web_util::get_username_from_session(&req.get_session()).is_none()
         {
             let (request, _pl) = req.into_parts();

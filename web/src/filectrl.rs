@@ -42,7 +42,7 @@ pub(crate) async fn upload(
             Err(err) => return Either::Right(Err(err)),
         }
     }
-    if file_ids.len() == 0 {
+    if file_ids.is_empty() {
         return Either::Left(result::forbidden_with_errmsg(String::from(
             "请选择上传文件",
         )));
@@ -76,7 +76,7 @@ fn get_file_save_path() -> String {
 fn get_file_max_size_bytes() -> usize {
     let max_size_mb = config_util::get_app_config()
         .get_float("tl.app.upload.max_size")
-        .unwrap_or_else(|_| 1.0);
+        .unwrap_or(1.0);
     (max_size_mb * 1024.0 * 1024.0) as usize
 }
 

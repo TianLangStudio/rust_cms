@@ -98,10 +98,10 @@ pub(crate) async fn admin_publish_article(
     //we should set the status of article as under review if need approval before publish
     if config_util::need_approval() {
         articlerepo::submit_review(article_id, content_id, &mut conn)
-            .map_err(|e| error::ErrorInternalServerError(e))?;
+            .map_err(error::ErrorInternalServerError)?;
     } else {
         articlerepo::publish_article(article_id, content_id, &mut conn)
-            .map_err(|e| error::ErrorInternalServerError(e))?;
+            .map_err(error::ErrorInternalServerError)?;
     }
 
     Ok(result::ok_without_data())
@@ -116,7 +116,7 @@ async fn admin_approve(
 ) -> Result<HttpResponse, Error> {
     let username = web_util::get_username_from_session(&session)
         .ok_or(error::ErrorNetworkAuthenticationRequired("login first"))?;
-    if !config_util::is_approver(&username) {
+    if !config_util::is_approve_user(&username) {
         return Err(error::ErrorPreconditionFailed("not approver"));
     };
 
@@ -127,10 +127,10 @@ async fn admin_approve(
     let mut conn = web_util::get_conn_or_busy_error(&pool)?;
     if is_approve {
         articlerepo::publish_article(article_id, content_id, &mut conn)
-            .map_err(|e| error::ErrorInternalServerError(e))?;
+            .map_err(error::ErrorInternalServerError)?;
     } else {
         articlerepo::reject_review(article_id, content_id, &mut conn)
-            .map_err(|e| error::ErrorInternalServerError(e))?;
+            .map_err(error::ErrorInternalServerError)?;
     }
     Ok(result::ok_without_data())
 }
@@ -158,7 +158,7 @@ fn view_articles_by_status(
 }
 fn render_context_insert(render_context: &mut tera::Context, article_status: &i32, username: &str) {
     render_context.insert("username", username);
-    let is_approver = config_util::is_approver(username);
+    let is_approver = config_util::is_approve_user(username);
     render_context.insert("isApprover", &is_approver);
     let is_under_review = article_status == &ARTICLE_STATUS_UNDER_REVIEW;
     render_context.insert("status", &article_status);
@@ -199,7 +199,7 @@ pub(crate) async fn view_article_by_id_and_status(
     let article_status_opt = &path_params.1;
     let article_status = article_status_opt.unwrap_or(ARTICLE_STATUS_PUBLISHED);
 
-    let article_info = articlerepo::find_article_by_id(&mut conn, &article_id);
+    let article_info = articlerepo::find_article_by_id(&mut conn, article_id);
     let article_info = match article_info {
         Ok(article_info) => article_info,
         _ => return Ok(result::server_busy_error()),
@@ -207,8 +207,8 @@ pub(crate) async fn view_article_by_id_and_status(
 
     let article_content = articlerepo::find_article_content_by_id_and_status(
         &mut conn,
-        &article_id,
-        &article_status_opt,
+        article_id,
+        article_status_opt,
     );
     let article_content = match article_content {
         Ok(article_content) => article_content,
@@ -252,15 +252,12 @@ pub(crate) async fn admin_edit_view(
             Ok(article) if article.creater == username => {
                 ctx.insert("article", &article);
                 let article_status = Some(ARTICLE_STATUS_PUBLISHED);
-                match articlerepo::find_article_content_by_id_and_status(
+                if let Ok(article_content) = articlerepo::find_article_content_by_id_and_status(
                     &mut conn,
                     article_id,
                     &article_status,
                 ) {
-                    Ok(article_content) => {
-                        ctx.insert("article_content", &article_content.get_content())
-                    }
-                    _ => (),
+                    ctx.insert("article_content", &article_content.get_content());
                 };
             }
             _ => {

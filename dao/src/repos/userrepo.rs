@@ -47,7 +47,7 @@ pub fn change_password(
                 Err("修改密码失败".to_string())
             }
         }
-        _ => return Err("修改密码失败".to_string()),
+        _ => Err("修改密码失败".to_string()),
     }
 }
 

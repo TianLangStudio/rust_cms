@@ -22,10 +22,7 @@ pub fn get_username_from_session(session: &Session) -> Option<String> {
 }
 
 pub fn get_username(session: &Session) -> String {
-    match get_username_from_session(session) {
-        Some(username) => username,
-        None => String::from(""),
-    }
+    get_username_from_session(session).unwrap_or_default()
 }
 
 pub fn new_render_context(session: &Session) -> tera::Context {
@@ -40,7 +37,7 @@ pub fn render_html(
     tmpl: &tera::Tera,
     name: &str,
 ) -> HttpResponse {
-    let tmpl_name = get_tmpl_from_session(&session) + "/" + name + ".html";
+    let tmpl_name = get_tmpl_from_session(session) + "/" + name + ".html";
     let body = tmpl.render(&tmpl_name, render_context).unwrap();
     HttpResponse::Ok().content_type("text/html").body(body)
 }

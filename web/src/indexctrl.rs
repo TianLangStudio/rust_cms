@@ -15,10 +15,7 @@ pub(crate) async fn index(session: Session, tmpl: web::Data<Tera>) -> impl Respo
     let tmpl_name = web_util::get_tmpl_from_session(&session);
     let tmpl_name = tmpl_name + "/index.html";
 
-    let username = match web_util::get_username_from_session(&session) {
-        Some(username) => username,
-        None => String::from(""),
-    };
+    let username = web_util::get_username_from_session(&session).unwrap_or_default();
 
     let mut ctx = tera::Context::new();
     ctx.insert("username", &username);
