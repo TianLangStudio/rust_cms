@@ -2,9 +2,9 @@
 use actix_session::SessionExt;
 use actix_web::body::EitherBody;
 use actix_web::dev::{ServiceRequest, ServiceResponse};
-use std::future::{ready, Ready};
+use std::future::{Ready, ready};
 
-use actix_web::{dev, dev::Service, dev::Transform, Error, HttpResponse};
+use actix_web::{Error, HttpResponse, dev, dev::Service, dev::Transform};
 use futures_util::future::LocalBoxFuture;
 
 use log::info;

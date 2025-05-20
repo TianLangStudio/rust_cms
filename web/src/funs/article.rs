@@ -1,5 +1,5 @@
 //use std::collections::HashMap;
-use tera::{from_value, to_value, Result, Value};
+use tera::{Result, Value, from_value, to_value};
 
 use dao::repos::articlerepo;
 

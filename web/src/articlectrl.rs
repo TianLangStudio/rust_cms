@@ -1,6 +1,6 @@
 use actix_session::Session;
 use actix_web::web::Redirect;
-use actix_web::{error, get, post, web, Error, HttpResponse, Responder};
+use actix_web::{Error, HttpResponse, Responder, error, get, post, web};
 use diesel::r2d2::{self, ConnectionManager};
 use serde::{Deserialize, Serialize};
 use tera::{self, Tera};
@@ -215,7 +215,7 @@ pub(crate) async fn view_article_by_id_and_status(
         _ => {
             return Ok(result::internal_server_error(String::from(
                 "服务器繁忙请稍后再试",
-            )))
+            )));
         }
     };
 
@@ -263,7 +263,7 @@ pub(crate) async fn admin_edit_view(
             _ => {
                 return Ok(HttpResponse::NotFound()
                     .content_type("text/html")
-                    .body("文章不存在"))
+                    .body("文章不存在"));
             }
         };
     };

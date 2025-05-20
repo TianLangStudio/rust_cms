@@ -1,5 +1,5 @@
 use actix_session::Session;
-use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{HttpResponse, Responder, get, post, web};
 use diesel::r2d2::{self, ConnectionManager};
 
 use common::db_util;

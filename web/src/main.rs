@@ -1,14 +1,18 @@
 use actix_files as fs;
-use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+use actix_http::body::BoxBody;
+use actix_session::{SessionExt, SessionMiddleware, storage::CookieSessionStore};
 use actix_web::cookie::Key;
-use actix_web::{web, App, HttpServer};
+use actix_web::dev::ServiceResponse;
+use actix_web::http::header::ContentType;
+use actix_web::middleware::{ErrorHandlerResponse, ErrorHandlers};
+use actix_web::web::redirect;
+use actix_web::{App, HttpResponse, HttpServer, web};
+use http::StatusCode;
+use log::*;
 use rustls::{Certificate, PrivateKey, ServerConfig};
 use rustls_pemfile::{certs, pkcs8_private_keys};
 use std::fs::File;
 use std::io::BufReader;
-use actix_web::web::redirect;
-use log::*;
-
 use tera::Tera;
 
 use common::{config_util, db_util, log_util};
@@ -70,8 +74,9 @@ async fn main() -> std::io::Result<()> {
             .service(fs::Files::new("/static", "static").show_files_listing()) //静态文件
             .service(indexctrl::favicon) //favicon
             .service(indexctrl::index) //首页
-            .service(indexctrl::sitemap)//sitemap.xml
+            .service(indexctrl::sitemap) //sitemap.xml
             .service(redirect("/ads.txt", "/static/ads.txt"))
+            .service(web::scope("").wrap(error_handlers()))
     });
 
     if is_prod {
@@ -118,4 +123,53 @@ fn load_rustls_config() -> rustls::ServerConfig {
     }
 
     config.with_single_cert(cert_chain, keys.remove(0)).unwrap()
+}
+
+// Custom error handlers, to return HTML responses when an error occurs.
+fn error_handlers() -> ErrorHandlers<BoxBody> {
+    ErrorHandlers::new().handler(StatusCode::NOT_FOUND, not_found)
+}
+
+// Error handler for a 404 Page not found error.
+fn not_found<B>(res: ServiceResponse<B>) -> actix_web::Result<ErrorHandlerResponse<BoxBody>> {
+    let response = get_error_response(&res, "Page not found");
+    Ok(ErrorHandlerResponse::Response(ServiceResponse::new(
+        res.into_parts().0,
+        response.map_into_left_body(),
+    )))
+}
+
+// Generic error handler.
+fn get_error_response<B>(res: &ServiceResponse<B>, error: &str) -> HttpResponse {
+    let request = res.request();
+    let session = request.get_session();
+    // Provide a fallback to a simple plain text response in case an error occurs during the
+    // rendering of the error page.
+    let fallback = |err: &str| {
+        HttpResponse::build(res.status())
+            .content_type(ContentType::plaintext())
+            .body(err.to_string())
+    };
+
+    let tera = request.app_data::<web::Data<Tera>>().map(|t| t.get_ref());
+    match tera {
+        Some(tera) => {
+            let tmpl_name = web_util::get_tmpl_from_session(&session);
+            let tmpl_name = tmpl_name + "/error.html";
+            let username = web_util::get_username_from_session(&session).unwrap_or_default();
+            let mut context = tera::Context::new();
+            context.insert("username", &username);
+            context.insert("error", error);
+            context.insert("status_code", res.status().as_str());
+            let body = tera.render(&tmpl_name, &context);
+
+            match body {
+                Ok(body) => HttpResponse::build(res.status())
+                    .content_type(ContentType::html())
+                    .body(body),
+                Err(_) => fallback(error),
+            }
+        }
+        None => fallback(error),
+    }
 }

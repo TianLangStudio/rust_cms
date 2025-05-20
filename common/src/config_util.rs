@@ -1,5 +1,5 @@
-use std::sync::OnceLock;
 use config::{Config, ConfigBuilder, Value};
+use std::sync::OnceLock;
 static APP_CONFIG: OnceLock<Config> = OnceLock::new();
 pub fn get_app_config() -> &'static Config {
     APP_CONFIG.get_or_init(init_app_config)

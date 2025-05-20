@@ -1,0 +1,15 @@
+{% extends "freelancer/common/base.html" %}
+{% block head %}
+  {{super()}}
+  <meta charset="utf-8" />
+  <title>{{ error }}</title>
+{% endblock head %}
+{% block content%}
+<header class="masthead bg-primary  text-center">
+  <div class="container d-flex align-items-right flex-column" style="color: darkgray;">
+    <h1>{{ status_code }} {{ error }}</h1>
+    <h3>Please feel free to <a href="/" style="color: darkgray;text-decoration: underline; text-emphasis:'❤️';">email me</a> if you need this page, I might have forgotten to deploy it.</h3>
+  </div>
+</header>
+{% endblock content%}
+

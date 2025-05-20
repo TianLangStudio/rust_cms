@@ -1,10 +1,10 @@
 use std::sync::OnceLock;
 use std::time::Duration;
 
+use crate::config_util::get_app_config;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use log::info;
-use crate::config_util::get_app_config;
 
 pub type DbConnection = MysqlConnection;
 pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
