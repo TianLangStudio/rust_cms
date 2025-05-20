@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  {% set articles=list_new_articles(page_no=0,  page_size=1000, status=8) %}
+  {% for article in articles  %}
+  {% if article.url %}
+  {%set article_url=article.url %}
+  {% else %}
+  {%set article_url=base_path ~ '/view/article/' ~ article.id ~ '/' ~ '8' %}
+  <url>
+    <loc>{{article_url}}</loc>
+    <lastmod>{{article.create_at}}{{'+08:00'}}</lastmod>
+    <priority>1.00</priority>
+  </url>
+  {% endif %}
+  {% endfor %}
+  {% set site_last_update_at=articles[0].create_at|default(value='2025-05-18T08:08:08')%}
+  <url>
+    <loc>{{base_path}}/</loc>
+    <lastmod>{{site_last_update_at}}{{'+08:00'}}</lastmod>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>{{base_path}}/view/articles</loc>
+    <lastmod>{{site_last_update_at}}{{'+08:00'}}</lastmod>
+    <priority>0.50</priority>
+  </url>
+</urlset>

@@ -28,7 +28,7 @@ async fn main() -> std::io::Result<()> {
     let is_prod = config_util::is_prod();
     let secret_key = Key::generate();
     let server = HttpServer::new(move || {
-        let mut tera = match Tera::new("template/**/*.html") {
+        let mut tera = match Tera::new("template/**/*.*ml") {
             Ok(t) => t,
             Err(e) => {
                 error!("Tera Parsing error: {}", e);
@@ -70,6 +70,7 @@ async fn main() -> std::io::Result<()> {
             .service(fs::Files::new("/static", "static").show_files_listing()) //静态文件
             .service(indexctrl::favicon) //favicon
             .service(indexctrl::index) //首页
+            .service(indexctrl::sitemap)//sitemap.xml
             .service(redirect("/ads.txt", "/static/ads.txt"))
     });
 

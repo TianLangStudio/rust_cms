@@ -1,8 +1,9 @@
 use super::web_util;
 use actix_files as fs;
 use actix_session::Session;
-use actix_web::{get, web, HttpResponse, Responder, Result};
+use actix_web::{get, web, HttpRequest, HttpResponse, Responder, Result};
 use tera::{self, Tera};
+use common::result::internal_server_error;
 
 /// 网站favicon文件
 #[get("/favicon.ico")]
@@ -22,4 +23,21 @@ pub(crate) async fn index(session: Session, tmpl: web::Data<Tera>) -> impl Respo
     let body = tmpl.render(&tmpl_name, &ctx).unwrap();
 
     HttpResponse::Ok().content_type("text/html").body(body)
+}
+
+#[get("/sitemap.xml")]
+pub(crate) async fn sitemap(request: HttpRequest,  tmpl: web::Data<Tera>) -> impl Responder {
+    let url = request.full_url().to_string();
+    log::info!("url: {}", url);
+    //let uri = request.uri().to_string();
+    //log::info!("uri: {}", uri);
+    let mut base_path = url.splitn(2, "/sitemap.xml").collect::<Vec<&str>>();
+    let base_path = base_path.remove(0);
+    let tmpl_name = "sitemap.xml";
+    let mut ctx = tera::Context::new();
+    ctx.insert("base_path", base_path);
+    match tmpl.render(tmpl_name, &ctx) {
+        Ok(body) =>  HttpResponse::Ok().content_type("text/xml").body(body),
+        Err(e) => internal_server_error(format!("{:?}", e))
+    }
 }
