@@ -74,6 +74,7 @@ async fn main() -> std::io::Result<()> {
             .service(indexctrl::favicon) //favicon
             .service(indexctrl::index) //首页
             .service(indexctrl::sitemap) //sitemap.xml
+            .service(indexctrl::health)
             .service(redirect("/ads.txt", "/static/ads.txt"))
             .service(web::scope("").wrap(error_handlers()))
     });
@@ -140,6 +141,7 @@ fn not_found<B>(res: ServiceResponse<B>) -> actix_web::Result<ErrorHandlerRespon
 // Generic error handler.
 fn get_error_response<B>(res: &ServiceResponse<B>, error: &str) -> HttpResponse {
     let request = res.request();
+    log::error!("{} {}", error, request.path());
     let session = request.get_session();
     // Provide a fallback to a simple plain text response in case an error occurs during the
     // rendering of the error page.

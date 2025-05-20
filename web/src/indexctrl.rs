@@ -24,7 +24,10 @@ pub(crate) async fn index(session: Session, tmpl: web::Data<Tera>) -> impl Respo
 
     HttpResponse::Ok().content_type("text/html").body(body)
 }
-
+#[get("/health")]
+pub(crate) async fn health() -> impl Responder {
+    HttpResponse::Ok().body("OK")
+}
 #[get("/sitemap.xml")]
 pub(crate) async fn sitemap(request: HttpRequest, tmpl: web::Data<Tera>) -> impl Responder {
     let url = request.full_url().to_string();
