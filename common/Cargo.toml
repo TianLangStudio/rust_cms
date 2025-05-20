@@ -7,7 +7,7 @@ edition = "2024"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-config="0.13"
+config= "0.15.11"
 log = "0.4"
 log4rs="1"
 blake2 = "0.10" # https://github.com/RustCrypto/hashes

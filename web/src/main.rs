@@ -7,15 +7,16 @@ use actix_web::http::header::ContentType;
 use actix_web::middleware::{ErrorHandlerResponse, ErrorHandlers};
 use actix_web::web::redirect;
 use actix_web::{App, HttpResponse, HttpServer, web};
-use http::StatusCode;
 use log::*;
-use rustls::{Certificate, PrivateKey, ServerConfig};
-use rustls_pemfile::{certs, pkcs8_private_keys};
-use std::fs::File;
-use std::io::BufReader;
+use rustls::{
+    ServerConfig,
+    pki_types::{CertificateDer, PrivateKeyDer, pem::PemObject},
+};
 use tera::Tera;
 
+use common::config_util::get_app_config;
 use common::{config_util, db_util, log_util};
+
 mod articlectrl;
 mod filectrl;
 mod funs;
@@ -28,8 +29,6 @@ mod web_util;
 async fn main() -> std::io::Result<()> {
     log_util::init();
     info!("app starting");
-    //let app_config = config_util::APP_CONFIG;
-    let is_prod = config_util::is_prod();
     let secret_key = Key::generate();
     let server = HttpServer::new(move || {
         let mut tera = match Tera::new("template/**/*.*ml") {
@@ -79,9 +78,19 @@ async fn main() -> std::io::Result<()> {
             .service(web::scope("").wrap(error_handlers()))
     });
 
-    if is_prod {
+    if get_app_config()
+        .get_bool("tl.app.https.enable")
+        .unwrap_or_default()
+    {
         let config = load_rustls_config();
-        server.bind_rustls("127.0.0.1:8443", config)?.run().await
+        let https_host = get_app_config()
+            .get_string("tl.app.https.host")
+            .unwrap_or("127.0.0.1".to_string());
+        let https_port = get_app_config()
+            .get_int("tl.app.https.host")
+            .unwrap_or(8443);
+        let address = format!("{}:{}", https_host, https_port);
+        server.bind_rustls_0_23(&address, config)?.run().await
     } else {
         let port = config_util::get_app_config()
             .get_string("tl.app.http.port")
@@ -95,39 +104,28 @@ async fn main() -> std::io::Result<()> {
 }
 
 fn load_rustls_config() -> rustls::ServerConfig {
-    // init server config builder with safe defaults
-    let config = ServerConfig::builder()
-        .with_safe_defaults()
-        .with_no_client_auth();
+    rustls::crypto::aws_lc_rs::default_provider()
+        .install_default()
+        .expect("Failed to install rustls::crypto::aws_lc_rs");
 
     // load TLS key/cert files
-    let cert_file = &mut BufReader::new(File::open("cert.pem").unwrap());
-    let key_file = &mut BufReader::new(File::open("key.pem").unwrap());
-
-    // convert files to key/cert objects
-    let cert_chain = certs(cert_file)
-        .unwrap()
-        .into_iter()
-        .map(Certificate)
+    let cert = "cert.pem";
+    let cert_chain = CertificateDer::pem_file_iter(cert)
+        .unwrap_or_else(|err| panic!("Failed to load certificate {} error: {:?}", cert, err))
+        .flatten()
         .collect();
-    let mut keys: Vec<PrivateKey> = pkcs8_private_keys(key_file)
+    let key = "key.pem";
+    let key_der = PrivateKeyDer::from_pem_file(key)
+        .unwrap_or_else(|err| panic!("Failed to load private key {} error: {:?}", key, err));
+    ServerConfig::builder()
+        .with_no_client_auth()
+        .with_single_cert(cert_chain, key_der)
         .unwrap()
-        .into_iter()
-        .map(PrivateKey)
-        .collect();
-
-    // exit if no keys could be parsed
-    if keys.is_empty() {
-        eprintln!("Could not locate PKCS 8 private keys.");
-        std::process::exit(1);
-    }
-
-    config.with_single_cert(cert_chain, keys.remove(0)).unwrap()
 }
 
 // Custom error handlers, to return HTML responses when an error occurs.
 fn error_handlers() -> ErrorHandlers<BoxBody> {
-    ErrorHandlers::new().handler(StatusCode::NOT_FOUND, not_found)
+    ErrorHandlers::new().handler(http::StatusCode::NOT_FOUND, not_found)
 }
 
 // Error handler for a 404 Page not found error.

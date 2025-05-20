@@ -8,21 +8,17 @@ edition = "2024"
 
 [dependencies]
 log = "0.4"
-http="0.2"
-actix-web={version = "4", features=["rustls"]}
-rustls = "0.20.2"
-rustls-pemfile = "1"
+http= "0.2"
+actix-web={version = "4", features = ["rustls-0_23"] }
+rustls = "0.23.*"
+#rustls-pemfile = "2.2.*"
 #actix-rt="1"
-actix-session={version="0.6", features = ["cookie-session"]}
+actix-session={version= "0.10.1", features = ["cookie-session"]}
 actix-files = "0.6"
-actix-utils = "3.0"
-actix-service="2"
-actix-multipart = "0.4"
+actix-multipart = "0.7.2"
 actix-http = "3"
-actix-identity = "0.4"
 async-std = "1"
 
-lazy_static = "1.4"
 tera = "1"
 futures = "0.3"
 futures-util = { version = "0.3", default-features = false, features = ["std"] }
