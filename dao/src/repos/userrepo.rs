@@ -79,3 +79,19 @@ pub fn valid_login_info(conn: &mut DbConnection, uname: &str, passwd: &str) -> b
 fn signed_password(passwd: &str, username: &str) -> String {
     sign_util::blake2_sign_with_salt(passwd, username)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    pub fn test_signed_password() {
+        let username = "tianlang";
+        let passwd = "KeepWriting";
+        println!(
+            "username:{},passwd:{}, new passwd: {}",
+            username,
+            passwd,
+            signed_password(passwd, username)
+        );
+    }
+}

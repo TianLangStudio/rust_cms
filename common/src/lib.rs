@@ -21,12 +21,6 @@ mod tests {
         assert_eq!(config_util::is_prod(), false);
     }
 
-    #[test]
-    fn sign_util_test() {
-        use super::sign_util;
-        let sign = sign_util::blake2_sign("hello world");
-        println!("sign:{}", sign);
-    }
 
     #[test]
     fn ajax_result_test() {
